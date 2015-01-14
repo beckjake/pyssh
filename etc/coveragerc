@@ -1,0 +1,9 @@
+[report]
+
+exclude_lines =
+    raise NotImplementedError
+    def __repr__
+
+[run]
+omit =
+    */__init__.py
