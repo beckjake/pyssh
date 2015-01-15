@@ -195,7 +195,7 @@ class TestPKAuthSuccess(unittest.TestCase, BaseAuth):
             b'\x00\x00\x00\x0Esome_algorithm'
             b'\x00\x00\x00\x09some_blob'
         )
-        self.state = State(auth_method='publickey')
+        self.state = State(auth_method=b'publickey')
 
 
 class TestPasswordAuth(unittest.TestCase, BaseAuth):

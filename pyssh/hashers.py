@@ -1,5 +1,9 @@
+
+from collections import OrderedDict
+
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes, hmac
+from cryptography.hazmat.primitives.constant_time import bytes_eq
 
 from pyssh.base_types import UInt32
 from pyssh.constants import (
@@ -9,6 +13,9 @@ from pyssh.constants import (
     ALGORITHM_HMAC_SHA256, ALGORITHM_HMAC_SHA512, ALGORITHM_HMAC_SHA1_96,
     ALGORITHM_HMAC_MD5_96
 )
+
+class InvalidHash(Exception):
+    pass
 
 
 class BaseHasher(object):
@@ -25,24 +32,13 @@ class BaseHasher(object):
         """Get the IV size, in bytes."""
         raise NotImplementedError('implement in subclass')
 
-    def hash(self, sequence, data):
-        """Hash the given data using the given sequence ID."""
+    def hash(self, data):
+        """Hash the given data."""
         raise NotImplementedError('implement in subclass')
 
-    def validate(self, sequence, data, mac):
-        """Validate the given data using the given sequence ID."""
+    def validate(self, data, mac):
+        """Validate the given data."""
         raise NotImplementedError('implement in subclass')
-
-    def validate_stream(self, sequence, stream, packet_size):
-        """Validate the stream and remove the hash. Leave it at the end.
-        """
-        data = stream.read(packet_size)
-        mac = stream.read(self.digest_size)
-
-        extra = stream.read()
-        if extra:
-            raise InvalidHash('Extra data after hash: {!r}'.format(extra))
-        self.validate(sequence, data, mac)
 
 
 class _CryptographyHasher(BaseHasher):
@@ -51,7 +47,7 @@ class _CryptographyHasher(BaseHasher):
             backend = default_backend()
         self._backend = backend
         self._provider = provider
-        self.iv = iv
+        super(_CryptographyHasher, self).__init__(iv)
 
     @property
     def digest_size(self):
@@ -77,26 +73,26 @@ class _CryptographyHasher(BaseHasher):
 class SHA1Hasher(_CryptographyHasher):
     ENCRYPT_FIRST = False
     def __init__(self, iv):
-        super(SHA1Hasher, self).__init__(hashes.SHA1, iv)
+        super(SHA1Hasher, self).__init__(hashes.SHA1(), iv)
 
 
 class MD5Hasher(_CryptographyHasher):
     ENCRYPT_FIRST = False
     def __init__(self, iv):
-        super(MD5Hasher, self).__init__(hashes.MD5, iv)
+        super(MD5Hasher, self).__init__(hashes.MD5(), iv)
 
 
 # The next 2 are specified in RFC 6668
 class SHA256Hasher(_CryptographyHasher):
     ENCRYPT_FIRST = False
     def __init__(self, iv):
-        super(SHA256Hasher, self).__init__(hashes.SHA256, iv)
+        super(SHA256Hasher, self).__init__(hashes.SHA256(), iv)
 
 
 class SHA512Hasher(_CryptographyHasher):
     ENCRYPT_FIRST = False
     def __init__(self, iv):
-        super(SHA512Hasher, self).__init__(hashes.SHA512, iv)
+        super(SHA512Hasher, self).__init__(hashes.SHA512(), iv)
 
 
 class SHA1_96Hasher(SHA1Hasher):
@@ -147,13 +143,10 @@ class NoneHasher(BaseHasher):
     def iv_size(self):
         return 0
 
-    def hash(self, sequence, data):
+    def hash(self, data):
         return b''
 
-    def validate(self, sequence, data, mac):
-        pass
-
-    def validate_stream(self, sequence, stream, packet_size):
+    def validate(self, data, mac):
         pass
 
 
