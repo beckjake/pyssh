@@ -6,13 +6,9 @@ from collections import OrderedDict
 import zlib
 
 # TODO: zlib@openssh.org compression
-# Probably handle it like PuTTY does (copy+pasted):
-# 1: Before USERAUTH_ACCEPT is received, advertise "zlib,none" in KEXINIT.
-# 2: If an incoming KEXINIT includes "zlib@openssh.com", remember that.
-# 3: After receiving USERAUTH_ACCEPT, if the current compression algorithm is
-#    "none" and KEXINIT contained "zlib@openssh.com", initiate key re-exchange.
-# 4: In KEXINITs after receiving USERAUTH_ACCEPT, advertise
-#    "zlib,zlib@openssh.com,none".
+# Probably handle it like PuTTY does, by re-doing the kex-init after we get
+# SSH_MSG_USERAUTH_SUCCESS but inserting "zlib@openssh.com" into the list, IF
+# we saw that from the server.
 # this avoids the nasty race inherent in determining when it's "after"
 # SSH_MSG_USERAUTH_SUCCESS was sent
 
