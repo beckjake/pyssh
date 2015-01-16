@@ -8,7 +8,6 @@ setup(name='pyssh',
       author_email='beckjake@gmail.com',
       packages=['pyssh'],
       install_requires=[
-        "pyasn1>=0.1.7",
         "future>=0.14.3",
         "cryptography>=0.6.1",
         "singledispatch>=3.4.0.3"

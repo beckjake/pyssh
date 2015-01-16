@@ -61,6 +61,7 @@ class BaseType(Packable): # pylint: disable=W0223
     """
     def __init__(self, value):
         self.value = value
+
     @classmethod
     def unpack_from(cls, stream):
         raise NotImplementedError('Must implement in subclass')

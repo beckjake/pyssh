@@ -8,11 +8,16 @@ What works:
 -----------
     - Some tests
     - Some message packing/unpacking code
+    - Hashing
+    - Compressing
     - 99%+ test coverage
 
 What doesn't work in order of likelihood to get fixed:
 ------------------------------------------------------
-    - The actual protocol
+    - Asymetric crypto
+    - Symmetric crypto
+    - Kex
+    - The rest of the protocol
     - Security
     - Stability
     - Documentation

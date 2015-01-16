@@ -1,6 +1,7 @@
 """Implement compressors.
 """
-from __future__ import print_function, unicode_literals, division, absolute_import
+from __future__ import print_function, division, absolute_import
+from __future__ import unicode_literals
 from pyssh.constants import COMPRESSION_TYPE_ZLIB, COMPRESSION_TYPE_NONE
 from collections import OrderedDict
 import zlib
