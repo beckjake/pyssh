@@ -1,7 +1,7 @@
 
 import pytest
 import unittest
-from pyssh import hashers
+from pyssh.crypto import hashers
 
 
 class TestHashes(unittest.TestCase):
