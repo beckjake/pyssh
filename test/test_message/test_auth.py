@@ -10,7 +10,11 @@ from pyssh.base_types import String, Byte, NameList, Boolean
 from pyssh.constants import (SSH_MSG_USERAUTH_REQUEST, SSH_METHOD_PUBLICKEY,
                              RANGE_USERAUTH_SPECIFIC, SSH_METHOD_PASSWORD,
                              SSH_METHOD_NONE, SSH_MSG_USERAUTH_FAILURE,
-                             SSH_MSG_USERAUTH_SUCCESS, SSH_MSG_USERAUTH_BANNER)
+                             SSH_MSG_USERAUTH_SUCCESS, SSH_MSG_USERAUTH_BANNER,
+                             SSH_MSG_USERAUTH_PK_OK,
+                             SSH_MSG_USERAUTH_PASSWD_CHANGEREQ,
+                             SSH_MSG_USERAUTH_INFO_REQUEST,
+                             SSH_MSG_USERAUTH_INFO_RESPONSE)
 
 import pytest
 import unittest
@@ -184,7 +188,7 @@ class TestPublicKeySigned(unittest.TestCase, BaseAuth):
 
 class TestPKAuthSuccess(unittest.TestCase, BaseAuth):
     def setUp(self):
-        self.header = Byte(RANGE_USERAUTH_SPECIFIC[0])
+        self.header = Byte(SSH_MSG_USERAUTH_PK_OK)
         self.algname = String(b'some_algorithm')
         self.blob = String(b'some_blob')
 
@@ -239,3 +243,69 @@ class TestNoneAuth(unittest.TestCase, BaseAuth):
             b'\x00\x00\x00\x04none'
         )
         self.state = State()
+
+
+class TestKeyboardInteractiveAuth(unittest.TestCase, BaseAuth):
+    def setUp(self):
+        self.header = Byte(SSH_MSG_USERAUTH_REQUEST)
+        self.methodname = String(b'keyboard-interactive')
+        self.username = String(b'some_user')
+        self.svcname = String(b'some_service')
+        self.language = String(b'')
+        self.submethods = String(b'')
+
+        self.args = (self.username, self.svcname, self.language,
+                     self.submethods)
+        self.cls = auth.KeyboardInteractiveAuth
+        self.packed = (
+            b'\x32'
+            b'\x00\x00\x00\x09some_user'
+            b'\x00\x00\x00\x0Csome_service'
+            b'\x00\x00\x00\x14keyboard-interactive'
+            b'\x00\x00\x00\x00'
+            b'\x00\x00\x00\x00'
+        )
+        self.state = State()
+
+
+class TestUserauthInfoRequest(unittest.TestCase, BaseAuth):
+    def setUp(self):
+        self.header = Byte(SSH_MSG_USERAUTH_INFO_REQUEST)
+        self.name = String(b'some-name')
+        self.instruction = String(b'some-instructions')
+        self.language = String(b'')
+        self.prompts = auth.Prompts([
+            (String(b'hello'), Boolean(True))
+        ])
+
+        self.args = (self.name, self.instruction, self.language, self.prompts)
+        self.cls = auth.UserauthInfoRequest
+        self.packed = (
+            b'\x3C'
+            b'\x00\x00\x00\x09some-name'
+            b'\x00\x00\x00\x11some-instructions'
+            b'\x00\x00\x00\x00'
+            b'\x00\x00\x00\x01'
+            b'\x00\x00\x00\x05hello'
+            b'\x01'
+        )
+        self.state = State(auth_method=b'keyboard-interactive')
+
+
+class TestUserauthInfoResponse(unittest.TestCase, BaseAuth):
+    def setUp(self):
+
+        self.header = Byte(SSH_MSG_USERAUTH_INFO_RESPONSE)
+        self.responses = auth.Responses([
+            (String('world!'), )
+        ])
+
+        self.args = (self.responses,)
+        self.cls = auth.UserauthInfoResponse
+        self.packed = (
+            b'\x3D'
+            b'\x00\x00\x00\x01'
+            b'\x00\x00\x00\x06world!'
+        )
+        self.state = State(auth_method=b'keyboard-interactive')
+

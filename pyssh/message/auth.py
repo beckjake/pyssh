@@ -3,11 +3,12 @@
 from __future__ import print_function, division, absolute_import
 from __future__ import unicode_literals
 
-from pyssh.base_types import Byte, Boolean, String, NameList
+from pyssh.base_types import Byte, Boolean, String, NameList, Sequence
 from pyssh.constants import (SSH_MSG_USERAUTH_REQUEST, SSH_METHOD_PUBLICKEY,
                              RANGE_USERAUTH_SPECIFIC, SSH_METHOD_PASSWORD,
-                             SSH_METHOD_NONE, SSH_MSG_USERAUTH_FAILURE,
-                             SSH_MSG_USERAUTH_SUCCESS, SSH_MSG_USERAUTH_BANNER)
+                             SSH_METHOD_NONE, SSH_METHOD_KEYBOARD_INTERACTIVE,
+                             SSH_MSG_USERAUTH_FAILURE, SSH_MSG_USERAUTH_SUCCESS,
+                             SSH_MSG_USERAUTH_BANNER)
 from .base import Message
 
 #pylint: disable=R0903,R0913
@@ -119,5 +120,46 @@ class NoneAuth(AuthRequest):
         super(NoneAuth, self).__init__(username, svcname, self.METHODNAME)
 
 
+# RFC 4256
+@AuthRequest.register(String(SSH_METHOD_KEYBOARD_INTERACTIVE))
+class KeyboardInteractiveAuth(AuthRequest):
+    """Section 3.1."""
+    SPEC = [('language', String), ('submethods', String)]
+    def __init__(self, username, svcname, language, submethods):
+        super(KeyboardInteractiveAuth, self).__init__(username, svcname,
+                                                      self.METHODNAME)
+        self.language = language
+        self.submethods = submethods
 
+
+class Prompts(Sequence):
+    TYPES = (String, Boolean)
+
+
+@Message.register_conditional(Byte(RANGE_USERAUTH_SPECIFIC[0]))
+class UserauthInfoRequest(Message):
+    """Userauth info request: Section 3.2"""
+    SPEC = [('name', String), ('instruction', String), ('language', String),
+            ('prompts', Prompts)
+            ]
+    SATISFIERS = {'auth_method': SSH_METHOD_KEYBOARD_INTERACTIVE}
+    def __init__(self, name, instruction, language, prompts):
+        super(UserauthInfoRequest, self).__init__(self.HEADER)
+        self.name = name
+        self.instruction = instruction
+        self.language = language
+        self.prompts = prompts
+
+
+class Responses(Sequence):
+    TYPES = (String,)
+
+@Message.register_conditional(Byte(RANGE_USERAUTH_SPECIFIC[1]))
+class UserauthInfoResponse(Message):
+    """Userauth info response: Section 3.3"""
+    SPEC = [('responses', Responses)]
+    SATISFIERS = {'auth_method': SSH_METHOD_KEYBOARD_INTERACTIVE}
+    def __init__(self, responses):
+        super(UserauthInfoResponse, self).__init__(self.HEADER)
+        self.responses = responses
 
