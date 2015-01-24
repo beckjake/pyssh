@@ -256,6 +256,55 @@ class NameList(_LPrefixed):
         return cls(x.decode('ascii') for x in data.split(b','))
 
 
+# A base composite type.
+class Sequence(BaseType):
+    """A sequence of specified types.
+
+    Subclass this and override TYPES to be a tuple of types.
+    This will pack and unpack as a list of num_repeats repetitions of
+    each TYPE. For example::
+
+
+        class NameValue(Sequence):
+            TYPES = (String, Byte)
+
+        values = [(String('a'), (1)), (String('b'), Byte(2))]
+        packed = (UInt32(2).pack() +
+                  String('a').pack() + Byte(1).pack() +
+                  String('b').pack() + Byte(2).pack())
+        assert NameValue(2, values).pack() == packed
+
+
+
+    """
+    TYPES = None
+    def __init__(self, value):
+        assert all(len(v) == len(self.TYPES) for v in value)
+        assert all(isinstance(e, t) for v in value for e, t in zip(v, self.TYPES))
+        super(Sequence, self).__init__(list(value))
+
+    def pack(self):
+        parts = [UInt32(len(self.value)).pack()]
+        parts.extend(e.pack() for seq in self.value for e in seq)
+        return b''.join(parts)
+
+    @classmethod
+    def unpack_from(cls, stream):
+        num_repeats = UInt32.unpack_from(stream).value
+        values = [tuple(t.unpack_from(stream) for t in cls.TYPES)
+                  for _ in range(num_repeats)]
+        return cls(values)
+
+    def append(self, entry):
+        """A helper: Add entry to the sequence. It should be a tuple matching
+        TYPES
+        """
+        assert len(entry) == len(self.TYPES)
+        assert all(isinstance(e, t) for e, t in zip(entry, self.TYPES))
+        self.value.append(entry)
+
+
+
 @enum.unique
 class Direction(enum.Enum):
     outbound = 1

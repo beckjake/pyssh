@@ -233,6 +233,37 @@ class TestNameList(unittest.TestCase):
             base_types.NameList.unpack_from(stream)
 
 
+class _NameValue(base_types.Sequence):
+    TYPES = (base_types.String, base_types.Byte)
+
+
+class TestSequence(unittest.TestCase):
+    def test_empty(self):
+        data = b'\x00\x00\x00\x00'
+        expect = _NameValue([])
+        _assert_dstreams_equal(_NameValue, data, expect)
+
+    def test_two(self):
+        data = (b'\x00\x00\x00\x02'
+                b'\x00\x00\x00\x01a\x01'
+                b'\x00\x00\x00\x01b\x02')
+
+        expect = _NameValue([
+            (base_types.String(b'a'), base_types.Byte(1)),
+            (base_types.String(b'b'), base_types.Byte(2))
+        ])
+        _assert_dstreams_equal(_NameValue, data, expect)
+
+    def test_append(self):
+        value = _NameValue([
+            (base_types.String(b'a'), base_types.Byte(1))
+        ])
+        data = (b'\x00\x00\x00\x02'
+                b'\x00\x00\x00\x01a\x01'
+                b'\x00\x00\x00\x01b\x02')
+        value.append((base_types.String(b'b'), base_types.Byte(2)))
+        assert value.pack() == data
+
 # some assorted standalone tests...
 class TestMisc(unittest.TestCase):
     def test_classproperty_obj(self):
