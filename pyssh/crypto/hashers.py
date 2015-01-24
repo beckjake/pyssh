@@ -163,16 +163,15 @@ HASHES = OrderedDict((
     (ALGORITHM_HMAC_SHA256, SHA256Hasher),
     (ALGORITHM_HMAC_SHA512, SHA512Hasher),
     (ALGORITHM_HMAC_MD5_96, MD5_96Hasher),
-    (ALGORITHM_HMAC_SHA1_96, SHA1_96Hasher),
-    (None, NoneHasher)
+    (ALGORITHM_HMAC_SHA1_96, SHA1_96Hasher)
 ))
 
 
-def get_hasher(algorithm, iv=None):
+def get_hasher(algorithm):
     """Given the algorithm, get its hasher."""
     try:
         hasher = HASHES[algorithm]
     except KeyError:
         raise ValueError('Invalid algorithm: {}'.format(algorithm))
-    return hasher(iv)
+    return hasher
 

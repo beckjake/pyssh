@@ -214,3 +214,4 @@ def get_public_key(keytype, host_key, signature_blob=None, data=None):
     if signature_blob:
         key.verify_from_blob(signature_blob, data)
     return key
+

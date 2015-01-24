@@ -9,6 +9,9 @@ import struct
 
 # python-future
 from builtins import int, bytes #pylint: disable=redefined-builtin
+# enum34
+import enum
+
 
 # pylint: disable=too-few-public-methods
 
@@ -251,3 +254,9 @@ class NameList(_LPrefixed):
         if not data:
             return cls(())
         return cls(x.decode('ascii') for x in data.split(b','))
+
+
+@enum.unique
+class Direction(enum.Enum):
+    outbound = 1
+    inbound = 2

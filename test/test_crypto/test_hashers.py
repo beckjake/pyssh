@@ -1,3 +1,5 @@
+from __future__ import print_function, division, absolute_import
+from __future__ import unicode_literals
 
 import pytest
 import unittest
@@ -86,14 +88,9 @@ class TestHashes(unittest.TestCase):
         assert inst.digest_size == 0
 
 class TestGetHasher(unittest.TestCase):
-    def test_none(self):
-        got = hashers.get_hasher(None)
-        assert isinstance(got, hashers.NoneHasher)
-
     def test_regular(self):
-        got = hashers.get_hasher(b'hmac-md5', b'iv'*8)
-        assert isinstance(got, hashers.MD5Hasher)
-        assert got.iv == b'iv'*8
+        got = hashers.get_hasher(b'hmac-md5')
+        assert got is hashers.MD5Hasher
 
     def test_missing(self):
         with pytest.raises(ValueError):

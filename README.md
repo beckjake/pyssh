@@ -10,12 +10,12 @@ What works:
     - Some message packing/unpacking code
     - Hashing
     - Compressing
+    - Asymmetric crypto
+    - Symmetric crypto
     - 99%+ test coverage
 
 What doesn't work in order of likelihood to get fixed:
 ------------------------------------------------------
-    - Asymetric crypto
-    - Symmetric crypto
     - Kex
     - The rest of the protocol
     - Security
