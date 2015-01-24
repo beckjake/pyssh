@@ -132,6 +132,7 @@ class MD5_96ETMHasher(MD5_96Hasher):
 
 
 class NoneHasher(BaseHasher):
+    ENCRYPT_FIRST = False
     def __init__(self, iv=None):
         super(NoneHasher, self).__init__(iv)
 
