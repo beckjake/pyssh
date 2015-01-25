@@ -3,7 +3,7 @@
 from __future__ import print_function, division, absolute_import
 from __future__ import unicode_literals
 
-from pyssh.message import transport
+from pyssh.message import tpt
 from pyssh.message.base import unpack_from, Message, State
 from pyssh.base_types import (Byte, Boolean, String, UInt32, NameList, MPInt,
                               RawByte16)
@@ -69,7 +69,7 @@ class TestKexInit(unittest.TestCase, BaseTransport):
         print(self.random_data.value)
         print(self.random_data.pack())
 
-        self.cls = transport.KexInit
+        self.cls = tpt.KexInit
         self.args = (
             self.kex_methods,
             self.server_host_key_algorithms,
@@ -117,7 +117,7 @@ class TestKexNewKeys(unittest.TestCase, BaseTransport):
         self.header = Byte(SSH_MSG_NEWKEYS)
 
         self.args = ()
-        self.cls = transport.KexNewkeys
+        self.cls = tpt.KexNewkeys
         self.packed = b'\x15'
         self.state = State()
 
@@ -127,7 +127,7 @@ class TestKexDHGroup1Init(unittest.TestCase, BaseTransport):
         self.e = MPInt(0x9A378F9B2E332A7)
 
         self.args = (self.e,)
-        self.cls = transport.KexDHGroup1Init
+        self.cls = tpt.KexDHGroup1Init
         self.packed = b'\x1E\x00\x00\x00\x08\x09\xA3\x78\xF9\xB2\xE3\x32\xA7'
         self.state = State(kex_method=KEX_DH_GROUP1_SHA1)
 
@@ -138,7 +138,7 @@ class TestKexDHGroup14Init(unittest.TestCase, BaseTransport):
         self.e = MPInt(0x9A378F9B2E332A7)
 
         self.args = (self.e,)
-        self.cls = transport.KexDHGroup14Init
+        self.cls = tpt.KexDHGroup14Init
         self.packed = b'\x1E\x00\x00\x00\x08\x09\xA3\x78\xF9\xB2\xE3\x32\xA7'
         self.state = State(kex_method=KEX_DH_GROUP14_SHA1)
 
@@ -151,7 +151,7 @@ class TestKexDHGroup1Reply(unittest.TestCase, BaseTransport):
         self.h_sig = String(b'some_h_sig')
 
         self.args = (self.k_s, self.f, self.h_sig)
-        self.cls = transport.KexDHGroup1Reply
+        self.cls = tpt.KexDHGroup1Reply
         self.packed = (
             b'\x1F'
             b'\x00\x00\x00\x08some_k_s'
@@ -169,7 +169,7 @@ class TestKexDHGroup14Reply(unittest.TestCase, BaseTransport):
         self.h_sig = String(b'some_h_sig')
 
         self.args = (self.k_s, self.f, self.h_sig)
-        self.cls = transport.KexDHGroup14Reply
+        self.cls = tpt.KexDHGroup14Reply
         self.packed = (
             b'\x1F'
             b'\x00\x00\x00\x08some_k_s'
@@ -185,7 +185,7 @@ class TestServiceRequest(unittest.TestCase, BaseTransport):
         self.name = String(b'some-service')
 
         self.args = (self.name,)
-        self.cls = transport.ServiceRequest
+        self.cls = tpt.ServiceRequest
         self.packed = (
             b'\x05'
             b'\x00\x00\x00\x0Csome-service'
@@ -199,7 +199,7 @@ class TestServiceAccept(unittest.TestCase, BaseTransport):
         self.name = String(b'some-service')
 
         self.args = (self.name,)
-        self.cls = transport.ServiceAccept
+        self.cls = tpt.ServiceAccept
         self.packed = (
             b'\x06'
             b'\x00\x00\x00\x0Csome-service'
@@ -215,7 +215,7 @@ class TestDisconnect(unittest.TestCase, BaseTransport):
         self.language_tag = String(b'en-us')
 
         self.args = (self.reason_code, self.description, self.language_tag)
-        self.cls = transport.Disconnect
+        self.cls = tpt.Disconnect
         self.packed = (
             b'\x01'
             b'\xFF\xFF\xFF\xFF'
@@ -231,7 +231,7 @@ class TestIgnore(unittest.TestCase, BaseTransport):
         self.data = String(b'ignore-me')
 
         self.args = (self.data,)
-        self.cls = transport.Ignore
+        self.cls = tpt.Ignore
         self.packed = (
             b'\x02'
             b'\x00\x00\x00\x09ignore-me'
@@ -247,7 +247,7 @@ class TestDebug(unittest.TestCase, BaseTransport):
         self.language_tag = String(b'en-us')
 
         self.args = (self.always_display, self.message, self.language_tag)
-        self.cls = transport.Debug
+        self.cls = tpt.Debug
         self.packed = (
             b'\x04'
             b'\x00'
@@ -264,7 +264,7 @@ class TestUnimplemented(unittest.TestCase, BaseTransport):
 
 
         self.args = (self.sequence_number,)
-        self.cls = transport.Unimplemented
+        self.cls = tpt.Unimplemented
         self.packed = (
             b'\x03'
             b'\x00\x00\x00\xAB'

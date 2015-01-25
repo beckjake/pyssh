@@ -116,7 +116,7 @@ class Arcfour256(_ImprovedArcfour):
 
 class NoneCipher(BaseCipher):
     NAME = 'none'
-    def __init__(self, key, iv, direction):
+    def __init__(self, key=None, iv=None, direction=None):
         pass
 
     def process_block(self, data):

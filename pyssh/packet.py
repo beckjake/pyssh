@@ -64,6 +64,10 @@ class PacketBuilder(PacketHandler):
         return encrypted + hmac
 
     def write_packet(self, writer, payload):
+        """Writer should be a file-like object with a write() method.
+
+        Payload should be the packet payload.
+        """
         writer.write(self.create_packet(payload))
 
     @property
@@ -91,7 +95,9 @@ class PacketReader(PacketHandler):
         self.decompressor = decompressor
 
     def decrypt_packet(self, reader):
-        """Decrypt a packet."""
+        """Decrypt a packet.
+        Reader should be a file-like object with a read() method.
+        """
         first_block_e = reader.read(self.decryptor.block_size)
         first_block = self.decryptor.process_block(first_block_e)
         packet_size = U32.unpack_from(first_block)[0]
@@ -112,7 +118,7 @@ class PacketReader(PacketHandler):
         data = self._sequence_pack() + data
         self.validator.validate(data, mac)
 
-    def read_packet(self, reader):
+    def read_packet(self, reader, hashed=False):
         decrypted, encrypted = self.decrypt_packet(reader)
 
         if self.validator.ENCRYPT_FIRST:
@@ -129,4 +135,5 @@ class PacketReader(PacketHandler):
         payload = decrypted.read(packet_length - padding_length - 1)
         padding = decrypted.read(padding_length)
         assert len(padding) == padding_length
+
         return payload
