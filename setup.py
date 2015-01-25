@@ -9,7 +9,7 @@ setup(name='pyssh',
       packages=['pyssh'],
       install_requires=[
         "future>=0.14.3",
-        "cryptography>=0.6.1",
+        "cryptography>=0.7.2",
         "singledispatch>=3.4.0.3",
         "enum34>=1.0.4"
         ]
