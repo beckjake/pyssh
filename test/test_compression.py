@@ -31,11 +31,11 @@ class TestZlibCompressor(unittest.TestCase):
 class TestGetCompressor(unittest.TestCase):
     def test_none(self):
         got = compression.get_compressor(b'none')
-        assert isinstance(got, compression.NoneCompressor)
+        assert issubclass(got, compression.NoneCompressor)
 
     def test_zlib(self):
         got = compression.get_compressor(b'zlib')
-        assert isinstance(got, compression.ZlibCompressor)
+        assert issubclass(got, compression.ZlibCompressor)
 
     def test_invalid(self):
         with pytest.raises(compression.UnsupportedCompressorError):

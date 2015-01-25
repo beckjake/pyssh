@@ -97,28 +97,28 @@ class BaseKexState(object):
     def _create_key(self, keychar, keysize):
         assert len(keychar) == 1
         start = keychar + self.session_id
-        return b''.join(_hash_iter(K.pack(), H, start, keysize))
+        return b''.join(self._hash_iter(start, keysize))
 
     def get_client_to_server_cipher(self):
         cls = get_cipher(self.negotiated.cipher_client_to_server)
         iv = self._create_key(b'A', cls.block_size)
-        key = self._create_key(b'C', cls.block_size)
+        key = self._create_key(b'C', cls.KEY_SIZE)
         return cls(key, iv, self.C_TO_S)
 
     def get_server_to_client_cipher(self):
         cls = get_cipher(self.negotiated.cipher_server_to_client)
         iv = self._create_key(b'B', cls.block_size)
-        key = self._create_key(b'D', cls.block_size)
+        key = self._create_key(b'D', cls.KEY_SIZE)
         return cls(key, iv, self.S_TO_C)
 
     def get_client_to_server_hasher(self):
         cls = get_hasher(self.negotiated.hash_client_to_server)
-        iv = self._create_key(b'E', cls.block_size)
+        iv = self._create_key(b'E', cls.iv_size)
         return cls(iv)
 
     def get_server_to_client_hasher(self):
         cls = get_hasher(self.negotiated.hash_server_to_client)
-        iv = self._create_key(b'F', cls.block_size)
+        iv = self._create_key(b'F', cls.iv_size)
         return cls(iv)
 
     def get_client_to_server_compressor(self):
@@ -150,7 +150,7 @@ class ClientKexState(BaseKexState):
         compressor = self.get_client_to_server_compressor()
         return PacketBuilder(encryptor, hasher, compressor)
 
-    def get_handler(self):
+    def get_reader(self):
         decryptor = self.get_server_to_client_cipher()
         validator = self.get_server_to_client_hasher()
         decompressor = self.get_server_to_client_compressor()
@@ -162,11 +162,11 @@ class ServerKexState(BaseKexState):
     S_TO_C = Direction.outbound
     def get_builder(self):
         encryptor = self.get_server_to_client_cipher()
-        validator = self.get_server_to_client_hasher()
+        hasher = self.get_server_to_client_hasher()
         compressor = self.get_server_to_client_compressor()
         return PacketBuilder(encryptor, hasher, compressor)
 
-    def get_handler(self):
+    def get_reader(self):
         decryptor = self.get_client_to_server_cipher()
         validator = self.get_client_to_server_hasher()
         decompressor = self.get_client_to_server_compressor()

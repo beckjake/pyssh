@@ -71,4 +71,4 @@ def get_compressor(algorithm):
         compressor = COMPRESSION_METHODS[algorithm]
     except KeyError:
         raise UnsupportedCompressorError(algorithm)
-    return compressor()
+    return compressor

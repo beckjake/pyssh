@@ -7,7 +7,7 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes, hmac
 from cryptography.hazmat.primitives.constant_time import bytes_eq
 
-from pyssh.base_types import UInt32
+from pyssh.base_types import UInt32, classproperty
 from pyssh.constants import (
     ALGORITHM_HMAC_MD5_ETM, ALGORITHM_HMAC_SHA1_ETM, ALGORITHM_HMAC_SHA256_ETM,
     ALGORITHM_HMAC_SHA512_ETM, ALGORITHM_HMAC_SHA1_96_ETM,
@@ -24,13 +24,13 @@ class BaseHasher(object):
     def __init__(self, iv):
         self.iv = iv
 
-    @property
-    def digest_size(self):
+    @classproperty
+    def digest_size(cls):
         """Get the digest size, in bytes."""
         raise NotImplementedError('implement in subclass')
 
-    @property
-    def iv_size(self):
+    @classproperty
+    def iv_size(cls):
         """Get the IV size, in bytes."""
         raise NotImplementedError('implement in subclass')
 
@@ -44,29 +44,29 @@ class BaseHasher(object):
 
 
 class _CryptographyHasher(BaseHasher):
-    def __init__(self, provider, iv, backend=None):
+    PROVIDER = None
+    def __init__(self, iv, backend=None):
         if backend is None:
             backend = default_backend()
         self._backend = backend
-        self._provider = provider
         super(_CryptographyHasher, self).__init__(iv)
 
-    @property
-    def digest_size(self):
-        return self._provider.digest_size
+    @classproperty
+    def digest_size(cls):
+        return cls.PROVIDER.digest_size
 
-    @property
-    def iv_size(self):
-        return self._provider.digest_size
+    @classproperty
+    def iv_size(cls):
+        return cls.PROVIDER.digest_size
 
     def hash(self, data):
-        hasher = hmac.HMAC(self.iv, self._provider, backend=self._backend)
+        hasher = hmac.HMAC(self.iv, self.PROVIDER, backend=self._backend)
         hasher.update(data)
         return hasher.finalize()[:self.digest_size]
 
     def validate(self, data, mac):
         #Because of the truncated mac thing, we can't use real validate().
-        hasher = hmac.HMAC(self.iv, self._provider, backend=self._backend)
+        hasher = hmac.HMAC(self.iv, self.PROVIDER, backend=self._backend)
         hasher.update(data)
         if not bytes_eq(hasher.finalize()[:self.digest_size], mac):
             raise InvalidHash('mac does not match')
@@ -74,38 +74,42 @@ class _CryptographyHasher(BaseHasher):
 
 class SHA1Hasher(_CryptographyHasher):
     ENCRYPT_FIRST = False
+    PROVIDER = hashes.SHA1()
     def __init__(self, iv):
-        super(SHA1Hasher, self).__init__(hashes.SHA1(), iv)
+        super(SHA1Hasher, self).__init__(iv)
 
 
 class MD5Hasher(_CryptographyHasher):
     ENCRYPT_FIRST = False
+    PROVIDER = hashes.MD5()
     def __init__(self, iv):
-        super(MD5Hasher, self).__init__(hashes.MD5(), iv)
+        super(MD5Hasher, self).__init__(iv)
 
 
 # The next 2 are specified in RFC 6668
 class SHA256Hasher(_CryptographyHasher):
     ENCRYPT_FIRST = False
+    PROVIDER = hashes.SHA256()
     def __init__(self, iv):
-        super(SHA256Hasher, self).__init__(hashes.SHA256(), iv)
+        super(SHA256Hasher, self).__init__(iv)
 
 
 class SHA512Hasher(_CryptographyHasher):
     ENCRYPT_FIRST = False
+    PROVIDER = hashes.SHA512()
     def __init__(self, iv):
-        super(SHA512Hasher, self).__init__(hashes.SHA512(), iv)
+        super(SHA512Hasher, self).__init__(iv)
 
 
 class SHA1_96Hasher(SHA1Hasher):
-    @property
-    def digest_size(self):
+    @classproperty
+    def digest_size(cls):
         return 12
 
 
 class MD5_96Hasher(MD5Hasher):
-    @property
-    def digest_size(self):
+    @classproperty
+    def digest_size(cls):
         return 12
 
 

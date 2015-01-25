@@ -15,6 +15,12 @@ from cryptography.hazmat.primitives.hashes import Hash, SHA1
 
 from pyssh import transport
 from pyssh.constants import SSH_IDENT_STRING
+from pyssh.base_types import MPInt
+from pyssh.crypto.symmetric import BaseCipher
+from pyssh.crypto.hashers import BaseHasher
+from pyssh.compression import BaseCompressor
+from pyssh import packet
+
 
 class DemoServer(threading.Thread):
     def __init__(self, reactions=None):
@@ -183,3 +189,60 @@ class TestTransport(unittest.TestCase):
         payload = tpt.read_packet()
         assert payload == b'\x01'
 
+
+class KexTest(object):
+    def test_init(self):
+        inst = self.create()
+        assert inst.session_id == b'\x00'*32
+        assert inst.K == self.K
+
+    def test_get_builder(self):
+        inst = self.create()
+        builder = inst.get_builder()
+        assert isinstance(builder, packet.PacketBuilder)
+        assert isinstance(builder.encryptor, BaseCipher)
+        assert isinstance(builder.hasher, BaseHasher)
+        assert isinstance(builder.compressor, BaseCompressor)
+
+    def test_get_reader(self):
+        inst = self.create()
+        handler = inst.get_reader()
+
+        assert isinstance(handler, packet.PacketReader)
+        assert isinstance(handler.decryptor, BaseCipher)
+        assert isinstance(handler.validator, BaseHasher)
+        assert isinstance(handler.decompressor, BaseCompressor)
+
+
+class TestClientKex(unittest.TestCase, KexTest):
+    def create(self):
+        self.K = MPInt(0xFFFFFFFF)
+        negotiated = transport.Negotiated(
+            b'diffie-hellman-group1-sha1',
+            b'ssh-dss',
+            b'aes256-cbc',
+            b'aes128-cbc',
+            b'hmac-md5',
+            b'hmac-md5',
+            b'none',
+            b'none'
+            )
+        inst = transport.ClientKexState(SHA1(), self.K, b'\x00'*32, negotiated)
+        return inst
+
+
+class TestServerKex(unittest.TestCase, KexTest):
+    def create(self):
+        self.K = MPInt(0xFFFFFFFF)
+        negotiated = transport.Negotiated(
+            b'diffie-hellman-group1-sha1',
+            b'ssh-dss',
+            b'aes256-cbc',
+            b'aes128-cbc',
+            b'hmac-md5',
+            b'hmac-md5',
+            b'none',
+            b'none'
+            )
+        inst = transport.ServerKexState(SHA1(), self.K, b'\x00'*32, negotiated)
+        return inst
