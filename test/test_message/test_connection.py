@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 
 from pyssh.message import connection
 from pyssh.base_types import Byte, String, Boolean, UInt32
-from pyssh.message.base import State, unpack_from
+from pyssh.message import unpack_from, State
 from pyssh.constants import (SSH_MSG_GLOBAL_REQUEST, SSH_MSG_REQUEST_SUCCESS,
                              SSH_MSG_REQUEST_FAILURE,
                              SSH_MSG_CHANNEL_OPEN, SSH_MSG_CHANNEL_CLOSE,

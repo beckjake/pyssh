@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 # requires that base_types work
 from pyssh.base_types import Byte, UInt32
 from pyssh.message import base
+from pyssh.message import unpack_from
 
 import pytest
 import unittest
@@ -124,7 +125,7 @@ class TestMessage(unittest.TestCase):
     def test_unpack_simple(self):
         DemoClass = self._create_simple()
         data = BytesIO(b'\xFF')
-        unpacked = base.unpack_from(data, base.State())
+        unpacked = unpack_from(data, base.State())
         assert isinstance(unpacked, DemoClass)
 
     def test_register_complex(self):
@@ -140,7 +141,7 @@ class TestMessage(unittest.TestCase):
     def test_unpack_complex(self):
         DemoClass = self._create_complex()
         data = BytesIO(b'\xFF\xFF\xFF\xFF\xFF')
-        unpacked = base.unpack_from(data, base.State())
+        unpacked = unpack_from(data, base.State())
         assert unpacked.foo == UInt32(2**32-1)
         assert isinstance(unpacked, DemoClass)
 
@@ -167,11 +168,11 @@ class TestMessage(unittest.TestCase):
     def test_unpack_intermediate(self):
         DemoClass, SecondClass = self._create_intermediate()
         data = BytesIO(b'\xFF\xFF\xFF\xFF\xFF')
-        unpacked = base.unpack_from(data, base.State())
+        unpacked = unpack_from(data, base.State())
         assert isinstance(unpacked, DemoClass)
         assert unpacked.foo == UInt32(2**32-1)
         data = BytesIO(b'\xFE\x00\x00\x00\x00')
-        unpacked = base.unpack_from(data, base.State())
+        unpacked = unpack_from(data, base.State())
         assert isinstance(unpacked, SecondClass)
         assert unpacked.foo == UInt32(0)
 
@@ -192,11 +193,11 @@ class TestMessage(unittest.TestCase):
         DemoClass, SecondClass = self._create_conditionals()
         data = BytesIO(b'\xFF')
         state = base.State(request_name=b'some-global')
-        unpacked = base.unpack_from(data, state)
+        unpacked = unpack_from(data, state)
         assert isinstance(unpacked, DemoClass)
         data = BytesIO(b'\xFF')
         state = base.State(request_name=b'some-other-global')
-        unpacked = base.unpack_from(data, state)
+        unpacked = unpack_from(data, state)
         assert isinstance(unpacked, SecondClass)
 
     def test_failed_lookup(self):

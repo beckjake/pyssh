@@ -60,6 +60,11 @@ class KexInit(Message):
         print(self.random_data)
         self.reserved =  UInt32(0) if reserved is None else reserved
 
+    def update(self, **kwargs):
+        for key, value in kwargs.items():
+            assert hasattr(self, key)
+            setattr(self, key, value)
+
 
 @Message.register(Byte(SSH_MSG_NEWKEYS))
 class KexNewkeys(Message):

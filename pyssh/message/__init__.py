@@ -9,3 +9,7 @@ field. These will be considered separate messages.
 from __future__ import print_function, division, absolute_import
 from __future__ import unicode_literals
 
+from .base import Message, State
+
+def unpack_from(stream, state):
+    return Message.unpack_from(stream, state, {})

@@ -61,10 +61,11 @@ def _walk_spec_mro(cls):
 
 
 class State(object):
-    def __init__(self, auth_method=None, kex_method=None, request_name=None):
+    def __init__(self, auth_method=None, kex_method=None, request_name=None, in_kex=False):
         self.auth_method = auth_method
         self.kex_method = kex_method
         self.request_name = request_name
+        self.in_kex = in_kex
 
     def matches(self, satisfiers):
         for key, value in satisfiers.items():
@@ -238,6 +239,3 @@ class Conditional(list):
         cls = self.find_satisfying(state)
         return cls.unpack_from(stream, state, kwargs)
 
-
-def unpack_from(stream, state):
-    return Message.unpack_from(stream, state, {})

@@ -309,3 +309,8 @@ class Sequence(BaseType):
 class Direction(enum.Enum):
     outbound = 1
     inbound = 2
+
+@enum.unique
+class Location(enum.Enum):
+    local = 1
+    remote = 2

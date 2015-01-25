@@ -4,7 +4,7 @@ from __future__ import print_function, division, absolute_import
 from __future__ import unicode_literals
 
 from pyssh.message import tpt
-from pyssh.message.base import unpack_from, Message, State
+from pyssh.message import unpack_from, Message, State
 from pyssh.base_types import (Byte, Boolean, String, UInt32, NameList, MPInt,
                               RawByte16)
 

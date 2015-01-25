@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 
 from pyssh.message import auth
 
-from pyssh.message.base import unpack_from, Message, State
+from pyssh.message import unpack_from, Message, State
 from pyssh.base_types import String, Byte, NameList, Boolean
 from pyssh.constants import (SSH_MSG_USERAUTH_REQUEST, SSH_METHOD_PUBLICKEY,
                              RANGE_USERAUTH_SPECIFIC, SSH_METHOD_PASSWORD,
