@@ -9,6 +9,7 @@ from pyssh import base_types
 import io
 
 import pytest
+from future.utils import PY3
 
 def _assert_dstreams_equal(cls, data, expect):
     stream = io.BytesIO(data)
@@ -282,7 +283,11 @@ class TestMisc(unittest.TestCase):
                 self.value = value
 
         assert str(Foo(1)) == 'Foo(1)'
-        assert str(Foo('test')) == "Foo('test')"
+        if PY3:
+            expect = "Foo('test')"
+        else:
+            expect = "Foo(u'test')"
+        assert str(Foo('test')) == expect
 
     def test_eq(self):
         class Foo(base_types.BaseType):
