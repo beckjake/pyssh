@@ -11,11 +11,12 @@ from cryptography.hazmat.backends import default_backend
 from collections import OrderedDict
 import io
 
-from builtins import int
+from builtins import int #pylint: disable=redefined-builtin
 
 from pyssh.constants import ENC_SSH_RSA, ENC_SSH_DSS
-from pyssh.base_types import Packable, String, MPInt
+from pyssh.base_types import String, MPInt
 
+# pylint:disable=invalid-name
 
 class UnsupportedKeyProtocol(Exception):
     """Key protocol not supported."""
@@ -27,51 +28,71 @@ class InvalidAlgorithm(Exception):
 
 #TODO: ECDSA (RFC 5656)
 class BaseAlgorithm(object):
+    """The base algorithm. Has private keys and/or public keys and does
+    signature creation and/or verification.
+    """
     FORMAT_STR = None
     PUBKEY_CLASS = None
     PRIVKEY_CLASS = None
-    def __init__(self, privkey=None, pubkey=None, signature_blob=None):
+    def __init__(self, privkey=None, pubkey=None):
+        self._privkey = None
         self.privkey = privkey
         self.pubkey = pubkey
-        self.signature_blob = signature_blob
 
-    def unpack_signature(self, stream):
-        self._check_keytype(stream)
-        self.signature_blob = String.unpack_from(stream).value
+    @property
+    def privkey(self):
+        """Getter for the private key."""
+        return self._privkey
 
-    def pack_signature(self):
-        return b''.join([
-            self.FORMAT_STR.pack(),
-            String(self.signature_blob).pack()
-        ])
+    @privkey.setter
+    def privkey(self, value):
+        """When setting the private key, also set the public key to match."""
+        self._privkey = value
+        if value:
+            self.pubkey = value.public_key()
 
     def unpack_pubkey(self, stream):
+        """Unpack a public key from a stream."""
         raise NotImplementedError('not implemented')
 
     def pack_pubkey(self):
+        """Pack a public key into bytes."""
         raise NotImplementedError('not implemented')
 
     @classmethod
     def _check_keytype(cls, stream):
+        """Verify that the keytype from the stream is the expected one."""
         keytype = String.unpack_from(stream)
         if cls.FORMAT_STR != keytype:
             msg = 'Got {!r}, expected {!r}'.format(keytype, cls.FORMAT_STR)
             raise InvalidAlgorithm(msg)
 
-    def verify_signature(self, data):
-        """Verify the signature against the given data."""
+    def verify_signature(self, signature, data):
+        """Verify the signature against the given data. Pubkey must be set."""
         raise NotImplementedError('not implemented')
 
     def sign(self, data):
-        """Sign some data."""
+        """Sign some data. Privkey must be set."""
         raise NotImplementedError('not implemented')
 
     def read_pubkey(self, data):
+        """Read a public key from data in the ssh public key format.
+
+        :param bytes data: the data to read.
+        Sets self.pubkey.
+        """
         pubkey = serialization.load_ssh_public_key(data, default_backend())
         assert isinstance(pubkey.public_numbers(), self.PUBKEY_CLASS)
         self.pubkey = pubkey
 
     def read_privkey(self, data, password=None):
+        """Read a PEM-encoded private key from data. If a password is set, it
+        will be used to decode the key.
+
+        :param bytes data: the data to read
+        :param bytes password: The password.
+        Sets self.privkey.
+        """
         privkey = serialization.load_pem_private_key(data, password,
                                                      default_backend())
         assert isinstance(privkey.private_numbers(), self.PRIVKEY_CLASS)
@@ -79,14 +100,15 @@ class BaseAlgorithm(object):
 
 
 class RSAAlgorithm(BaseAlgorithm):
+    """Support for the RSA algorithm."""
     FORMAT_STR = String(ENC_SSH_RSA)
     PRIVKEY_CLASS = rsa.RSAPrivateNumbers
     PUBKEY_CLASS = rsa.RSAPublicNumbers
     def unpack_pubkey(self, stream):
         self._check_keytype(stream)
-        e = MPInt.unpack_from(stream)
-        n = MPInt.unpack_from(stream)
-        self.pubkey = rsa.RSAPublicNumbers(e.value, n.value).public_key(default_backend())
+        e = MPInt.unpack_from(stream).value
+        n = MPInt.unpack_from(stream).value
+        self.pubkey = rsa.RSAPublicNumbers(e, n).public_key(default_backend())
 
     def pack_pubkey(self):
         return b''.join([
@@ -95,14 +117,18 @@ class RSAAlgorithm(BaseAlgorithm):
             MPInt(self.pubkey.public_numbers().n).pack()
         ])
 
-    def verify_signature(self, data):
+    def verify_signature(self, signature, data):
+        stream = io.BytesIO(signature)
+        self._check_keytype(stream)
+        blob = String.unpack_from(stream).value
         verifier = self.pubkey.verifier(
-            self.signature_blob,
+            blob,
             padding.PKCS1v15(),
             hashes.SHA1()
         )
         verifier.update(data)
-        return verifier.verify()
+        verifier.verify()
+
 
     def sign(self, data):
         signer = self.privkey.signer(
@@ -111,9 +137,14 @@ class RSAAlgorithm(BaseAlgorithm):
         )
         signer.update(data)
         signed = signer.finalize()
-        return signed
+        return b''.join([
+            self.FORMAT_STR.pack(),
+            String(signed).pack()
+        ])
+
 
 class DSAAlgorithm(BaseAlgorithm):
+    """Support for the DSA."""
     FORMAT_STR = String(ENC_SSH_DSS)
     PRIVKEY_CLASS = dsa.DSAPrivateNumbers
     PUBKEY_CLASS = dsa.DSAPublicNumbers
@@ -138,14 +169,16 @@ class DSAAlgorithm(BaseAlgorithm):
             MPInt(pubnums.y).pack(),
         ])
 
-    def verify_signature(self, data):
-        # convert to rfc6979 signature
-        r, s = (
-            int.from_bytes(self.signature_blob[:20], 'big'),
-            int.from_bytes(self.signature_blob[20:], 'big')
-        )
-        blob = utils.encode_rfc6979_signature(r, s)
+    def verify_signature(self, signature, data):
+        stream = io.BytesIO(signature)
+        self._check_keytype(stream)
+        blob = String.unpack_from(stream).value
 
+        # convert to rfc6979 signature
+        blob = utils.encode_rfc6979_signature(
+            r=int.from_bytes(blob[:20], 'big'),
+            s=int.from_bytes(blob[20:], 'big')
+        )
 
         verifier = self.pubkey.verifier(
             blob,
@@ -155,32 +188,24 @@ class DSAAlgorithm(BaseAlgorithm):
         verifier.verify()
 
     def sign(self, data):
-        print('data={}'.format(data))
-        privnum = self.privkey.private_numbers()
-        pubnum = self.privkey.public_key().public_numbers()
-        paramnum = pubnum.parameter_numbers
-        print('private_numbers: 0x{:02X}'.format(privnum.x))
-        # print('public_numbers: 0x{:02X}'.format(pubnum.y))
-        # print('parameter_numbers: 0x{:02X}, 0x{:02X}, 0x{:02X}'.format(paramnum.p, paramnum.q, paramnum.g))
         signer = self.privkey.signer(
             hashes.SHA1()
         )
         signer.update(data)
         signed = signer.finalize()
-        print('signed={}'.format(signed))
         r, s = utils.decode_rfc6979_signature(signed)
-        print('r=0x{:02X}, s=0x{:02X}'.format(r, s))
         return b''.join([
-            int(r).to_bytes(20, 'big'),
-            int(s).to_bytes(20, 'big')
+            self.FORMAT_STR.pack(),
+            String(int(r).to_bytes(20, 'big') + int(s).to_bytes(20, 'big')).pack(),
         ])
-
 
 
 PUBLIC_KEY_PROTOCOLS = OrderedDict((
     (ENC_SSH_RSA, RSAAlgorithm),
     (ENC_SSH_DSS, DSAAlgorithm)
 ))
+
+
 
 
 def get_asymmetric_algorithm(keytype):
@@ -191,4 +216,4 @@ def get_asymmetric_algorithm(keytype):
         handler = PUBLIC_KEY_PROTOCOLS[keytype]
     except KeyError:
         raise UnsupportedKeyProtocol(keytype)
-    return handler
+    return handler()

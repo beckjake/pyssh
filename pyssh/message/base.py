@@ -15,6 +15,7 @@ from pyssh.base_types import Packable, Byte, String
 
 from future.utils import with_metaclass
 
+#pylint:disable=too-few-public-methods
 
 class UnknownMessageError(Exception):
     """An unknown message"""
@@ -38,7 +39,6 @@ def _create_init_wrapper(method, type_restrictions):
     has type checking.
     """
     argspec = inspect.getargspec(method)
-    to_ensure = set(x for x in argspec.args if x != 'self')
     @wraps(method)
     def init_wrapper(self, *args, **kwargs): # pylint: disable=C0111
         # preserve the actual kwargs.
@@ -61,6 +61,13 @@ def _walk_spec_mro(cls):
 
 
 class State(object):
+    """Hold the state of an ssh transport session.
+
+    auth method is set after auth method is chosen for context
+    kex method is set after kex method is chosen for context
+    request name is set after a global request for context
+    in_kex is set if kex is in progress
+    """
     def __init__(self, auth_method=None, kex_method=None, request_name=None, in_kex=False):
         self.auth_method = auth_method
         self.kex_method = kex_method
@@ -68,6 +75,7 @@ class State(object):
         self.in_kex = in_kex
 
     def matches(self, satisfiers):
+        """Check if the state matches the given satisfiers dictionary."""
         for key, value in satisfiers.items():
             try:
                 if self.__dict__[key] != value:
@@ -100,11 +108,15 @@ class MessageMeta(type):
             dct['__init__'] = new_init
 
     def _unpack_spec(cls, stream):
+        """Unpack a class's SPEC from a stream."""
         for field_name, field_type in cls.SPEC:
             yield (field_name, field_type.unpack_from(stream))
 
 
     def unpack_from(cls, stream, state, kwargs):
+        """Unpack the message subclass from a stream, given its state and the
+        kwargs built up so far.
+        """
         kwargs.update(cls._unpack_spec(stream))
         if not cls._key:
             return cls(**kwargs)
@@ -195,6 +207,12 @@ class Message(with_metaclass(MessageMeta, Packable)):
     def register_conditional(cls, header):
         """Decorator to register a Message conditionally."""
         return cls._generic_register_conditional('HEADER', header)
+
+    def __eq__(self, other):
+        if type(self) is not type(other):
+            raise ValueError('different types')
+        return all(getattr(self, attr, None) == getattr(other, attr, None)
+                   for attr, _ in self.SPEC)
 
 
     def pack(self):

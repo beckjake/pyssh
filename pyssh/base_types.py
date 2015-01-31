@@ -67,6 +67,7 @@ class BaseType(Packable): # pylint: disable=W0223
 
     @classmethod
     def unpack_from(cls, stream):
+        """Unpack an instance from the stream."""
         raise NotImplementedError('Must implement in subclass')
 
     def __str__(self):
@@ -90,6 +91,7 @@ class BaseType(Packable): # pylint: disable=W0223
 
 
 class RawByte16(BaseType):
+    """A section of 16 raw bytes."""
     def pack(self):
         return self.value
 
@@ -314,10 +316,6 @@ class Sequence(BaseType):
 
 @enum.unique
 class Direction(enum.Enum):
+    """Direction of traffic: can be in or out."""
     outbound = 1
     inbound = 2
-
-@enum.unique
-class Location(enum.Enum):
-    local = 1
-    remote = 2

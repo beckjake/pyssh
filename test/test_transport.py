@@ -9,16 +9,7 @@ import unittest
 
 import pytest
 
-from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives.hashes import Hash, SHA1
-
-
 from pyssh import transport
-from pyssh.constants import SSH_IDENT_STRING
-from pyssh.base_types import MPInt
-from pyssh.crypto.symmetric import BaseCipher
-from pyssh.crypto.hashers import BaseHasher
-from pyssh.compression import BaseCompressor
 from pyssh import packet
 
 
@@ -155,11 +146,10 @@ class TestTransport(unittest.TestCase):
     def test_banner(self):
         port = self.server.listening_block()
         tpt = transport.Transport.from_addr(('localhost', port))
-        client, server = tpt.banner_exchange()
+        tpt.banner_exchange()
         tpt._raw.close()
         self.server.join()
-        assert client == SSH_IDENT_STRING
-        assert server == b'SSH-2.0-blahserver'
+        assert tpt._remote_banner == b'SSH-2.0-blahserver'
 
     def test_bad_version_server(self):
         self.server.banner = b'ASDF-1.0-test'
@@ -179,70 +169,3 @@ class TestTransport(unittest.TestCase):
         tpt._raw.close()
         self.server.join()
 
-    def test_nohandler_packet(self):
-        self.server.reactions.append(b'\x00\x00\x00\x0C\x0A\x01\x14\x40\x9C\xBF\x22\x13\x52\x5F\x5D\x55')
-        port = self.server.listening_block()
-        tpt = transport.Transport.from_addr(('localhost', port))
-        tpt.banner_exchange(2)
-
-        tpt.write_packet(b'\x00')
-        payload = tpt.read_packet()
-        assert payload == b'\x01'
-
-
-class KexTest(object):
-    def test_init(self):
-        inst = self.create()
-        assert inst.session_id == b'\x00'*32
-        assert inst.K == self.K
-
-    def test_get_builder(self):
-        inst = self.create()
-        builder = inst.get_builder()
-        assert isinstance(builder, packet.PacketBuilder)
-        assert isinstance(builder.encryptor, BaseCipher)
-        assert isinstance(builder.hasher, BaseHasher)
-        assert isinstance(builder.compressor, BaseCompressor)
-
-    def test_get_reader(self):
-        inst = self.create()
-        handler = inst.get_reader()
-
-        assert isinstance(handler, packet.PacketReader)
-        assert isinstance(handler.decryptor, BaseCipher)
-        assert isinstance(handler.validator, BaseHasher)
-        assert isinstance(handler.decompressor, BaseCompressor)
-
-
-class TestClientKex(unittest.TestCase, KexTest):
-    def create(self):
-        self.K = MPInt(0xFFFFFFFF)
-        negotiated = transport.Negotiated(
-            b'diffie-hellman-group1-sha1',
-            b'ssh-dss',
-            b'aes256-cbc',
-            b'aes128-cbc',
-            b'hmac-md5',
-            b'hmac-md5',
-            b'none',
-            b'none'
-            )
-        inst = transport.ClientKexState(SHA1(), self.K, b'\x00'*32, negotiated)
-        return inst
-
-
-class TestServerKex(unittest.TestCase, KexTest):
-    def create(self):
-        self.K = MPInt(0xFFFFFFFF)
-        negotiated = transport.Negotiated(
-            b'diffie-hellman-group1-sha1',
-            b'ssh-dss',
-            b'aes256-cbc',
-            b'aes128-cbc',
-            b'hmac-md5',
-            b'hmac-md5',
-            b'none',
-            b'none'
-            )
-        inst = transport.ServerKexState(SHA1(), self.K, b'\x00'*32, negotiated)
-        return inst

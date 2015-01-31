@@ -37,31 +37,15 @@ class BaseKeyTest(object):
             inst.unpack_pubkey(io.BytesIO(self.invalid_stream))
 
     def test_verify(self):
-        inst = self.cls(pubkey=self.pubkey, signature_blob=self.blob)
-        inst.verify_signature(self.to_sign)
-
-    def test_pack_signature(self):
-        inst = self.cls(signature_blob=self.blob)
-        assert inst.pack_signature() == self.expect_sig
-        return inst
-
-    def test_unpack_signature(self):
-        inst = self.cls()
-        inst.unpack_signature(io.BytesIO(self.expect_sig))
-        assert inst.signature_blob == self.blob
-        return inst
-
-    def test_invalid_signature(self):
-        inst = self.cls()
-        with pytest.raises(asymmetric.InvalidAlgorithm):
-            inst.unpack_signature(io.BytesIO(self.invalid_sig))
+        inst = self.cls(pubkey=self.pubkey)
+        inst.verify_signature(self.expect_sig, self.to_sign)
 
     def test_sign(self):
         """Not all signatures are deterministic, so test that the sign is verifiable."""
         inst = self.cls(privkey=self.privkey)
         blob = inst.sign(self.to_sign)
-        inst_2 = self.cls(pubkey=self.pubkey, signature_blob=blob)
-        inst_2.verify_signature(self.to_sign)
+        inst_2 = self.cls(pubkey=self.pubkey)
+        inst_2.verify_signature(blob, self.to_sign)
 
 # some 1024-bit generated values, including private keys
 # use these to generate test data.
@@ -113,7 +97,6 @@ class TestRSA(unittest.TestCase, BaseKeyTest):
             b'\x00\x00\x00\x81\x00\xFC\x25\xA6\x09\x65\xDF\x3B\xD3\x07\x0B\xC6\x91\x48\x6B\xD3\x54\x8F\x5C\xC1\x60\x38\x67\x45\x30\xFD\x78\xFD\x4F\x8A\x42\xC8\x24\x97\x98\xE3\xCE\xDE\x1E\x3C\x50\xD7\x8E\x73\xE6\x12\x63\x4B\x64\xDD\xB5\x9E\x10\x27\x78\x7A\xD9\xB1\xDB\x63\x98\x28\x3E\x18\x3B\x21\xB3\xE3\x90\xE8\x4E\x6D\x51\x99\x14\x96\x1C\x5E\x19\xC7\xE5\x8D\x9A\x7C\x75\xDA\xA0\x21\xCD\xD1\x93\x2C\x30\x1A\x8C\xF9\x8A\x94\x5B\xBF\xD5\x00\xCD\x7B\xA4\xD5\xD8\xE9\x7F\x34\xB2\x65\xAE\xFA\xE7\xA5\x56\xF7\xE0\x79\x7F\x61\x94\x83\xAF\xE7\xEB\x4F\x35'
         )
 
-        self.blob = b'\x0E\x10\x52\x02\x70\x51\x4C\xF3\x95\x95\xE4\x62\x13\x1D\x2F\x41\x94\xD2\x51\xB5\x95\xAE\x22\xD4\x75\xE4\xB7\x3F\x41\x90\xDE\x59\x19\x4B\x1D\xD9\x70\xCE\x30\xA1\xB3\x12\x7F\x97\x81\xFB\xAC\xEC\xC1\xE2\x01\xFE\x54\x05\x12\xAB\xEB\x76\x2E\xE2\xF5\x30\xAE\xF5\x5B\x52\xDE\x61\x0B\x74\xB3\x8F\xAF\xC4\x4A\x41\x7D\x44\x7D\x76\xC0\x13\x38\xA0\x4B\x8A\x9B\xAB\x64\x25\x72\x02\xF5\xD2\xAC\x3D\x39\xB5\xC1\xC4\x80\xB9\xF6\x77\x82\xA6\xDF\x41\xD2\xCA\x52\xC7\xC3\x58\xA1\xE0\x9E\x00\xA1\xEC\xA2\x5C\xE0\x5B\x7D\x83\xBB\x44'
         self.to_sign = b'sample test data'
 
         self.expect_sig = (
@@ -150,9 +133,6 @@ class TestDSA(unittest.TestCase, BaseKeyTest):
         )
 
         self.cls = asymmetric.DSAAlgorithm
-        # self.r = 0x4B5ED19958BB2FD5D0CC6E6B973AD8A973EAB7CB
-        # self.s = 0x313421EF5113B3E63D3B4E3E2DA84A74BB22833D
-        self.blob = b'\x4B\x5E\xD1\x99\x58\xBB\x2F\xD5\xD0\xCC\x6E\x6B\x97\x3A\xD8\xA9\x73\xEA\xB7\xCB\x31\x34\x21\xEF\x51\x13\xB3\xE6\x3D\x3B\x4E\x3E\x2D\xA8\x4A\x74\xBB\x22\x83\x3D'
         self.to_sign = b'sample test data'
         self.expect_sig = (
             b'\x00\x00\x00\x07ssh-dss'
@@ -251,4 +231,4 @@ class TetGetPublicKey(unittest.TestCase):
     def test_ok(self):
         keytype = b'ssh-rsa'
         ret = asymmetric.get_asymmetric_algorithm(keytype)
-        assert ret is asymmetric.RSAAlgorithm
+        assert isinstance(ret, asymmetric.RSAAlgorithm)

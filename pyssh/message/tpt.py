@@ -1,4 +1,6 @@
-"""All the messages defined in RFC 4253: SSH Transport Layer Protocol
+"""All the messages with a header between 0-49.
+
+Mostly from RFC 4253: SSH Transport Layer Protocol
 """
 
 from __future__ import print_function, division, absolute_import
@@ -18,7 +20,6 @@ from pyssh.constants import (SSH_MSG_KEXINIT, SSH_MSG_NEWKEYS,
 from .base import Message
 
 #pylint: disable=R0903,R0913,C0103,R0902
-
 @Message.register(Byte(SSH_MSG_KEXINIT))
 class KexInit(Message):
     """KexInit: Section 7.1"""
@@ -58,9 +59,10 @@ class KexInit(Message):
         self.random_data = os.urandom(16) if random_data is None else random_data
         print(random_data)
         print(self.random_data)
-        self.reserved =  UInt32(0) if reserved is None else reserved
+        self.reserved = UInt32(0) if reserved is None else reserved
 
     def update(self, **kwargs):
+        """Update values in the KexInit."""
         for key, value in kwargs.items():
             assert hasattr(self, key)
             setattr(self, key, value)
@@ -112,7 +114,6 @@ class KexDHGroup1Reply(KexDHReply):
     SATISFIERS = {'kex_method': KEX_DH_GROUP1_SHA1}
 
 
-
 @Message.register_conditional(Byte(SSH_MSG_KEXDH_REPLY))
 class KexDHGroup14Reply(KexDHReply):
     """Kex DH Reply: Section 8"""
@@ -127,6 +128,7 @@ class ServiceRequest(Message):
         super(ServiceRequest, self).__init__(self.HEADER)
         self.name = name
 
+
 @Message.register(Byte(SSH_MSG_SERVICE_ACCEPT))
 class ServiceAccept(Message):
     """Service Accept: Section 10."""
@@ -134,7 +136,6 @@ class ServiceAccept(Message):
     def __init__(self, name):
         super(ServiceAccept, self).__init__(self.HEADER)
         self.name = name
-
 
 
 @Message.register(Byte(SSH_MSG_DISCONNECT))
@@ -157,6 +158,7 @@ class Ignore(Message):
         super(Ignore, self).__init__(self.HEADER)
         self.data = data
 
+
 @Message.register(Byte(SSH_MSG_DEBUG))
 class Debug(Message):
     """Debug: Section 11.3"""
@@ -168,6 +170,7 @@ class Debug(Message):
         self.always_display = always_display
         self.message = message
         self.language_tag = language_tag
+
 
 @Message.register(Byte(SSH_MSG_UNIMPLEMENTED))
 class Unimplemented(Message):

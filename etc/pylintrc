@@ -112,7 +112,7 @@ confidence=
 # no Warning level messages displayed, use"--disable=all --enable=classes
 
 # --disable=W"
-disable=star-args,I
+disable=star-args,I,too-few-public-methods,logging-format-interpolation
 
 
 [BASIC]

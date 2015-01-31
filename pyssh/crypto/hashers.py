@@ -1,3 +1,5 @@
+"""An implementation of hashing algorithms specified in the various RFCs.
+"""
 from __future__ import print_function, division, absolute_import
 from __future__ import unicode_literals
 
@@ -7,7 +9,7 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes, hmac
 from cryptography.hazmat.primitives.constant_time import bytes_eq
 
-from pyssh.base_types import UInt32, classproperty
+from pyssh.base_types import classproperty
 from pyssh.constants import (
     ALGORITHM_HMAC_MD5_ETM, ALGORITHM_HMAC_SHA1_ETM, ALGORITHM_HMAC_SHA256_ETM,
     ALGORITHM_HMAC_SHA512_ETM, ALGORITHM_HMAC_SHA1_96_ETM,
@@ -16,13 +18,16 @@ from pyssh.constants import (
     ALGORITHM_HMAC_MD5_96
 )
 
+# pylint:disable=too-few-public-methods
+
 class InvalidHash(Exception):
-    pass
+    """The hash given was invalid."""
 
 
 class BaseHasher(object):
+    """The base class for all hasher objects."""
     def __init__(self, iv):
-        self.iv = iv
+        self.iv = iv  #pylint: disable=invalid-name
 
     @classproperty
     def digest_size(cls):
@@ -44,6 +49,9 @@ class BaseHasher(object):
 
 
 class _CryptographyHasher(BaseHasher):
+    """An internal-only class that all cryptography-based hashers should derive
+    from.
+    """
     PROVIDER = None
     def __init__(self, iv, backend=None):
         if backend is None:
@@ -68,11 +76,13 @@ class _CryptographyHasher(BaseHasher):
         #Because of the truncated mac thing, we can't use real validate().
         hasher = hmac.HMAC(self.iv, self.PROVIDER, backend=self._backend)
         hasher.update(data)
-        if not bytes_eq(hasher.finalize()[:self.digest_size], mac):
+        hashed = hasher.finalize()[:self.digest_size]
+        if not bytes_eq(hashed, mac):
             raise InvalidHash('mac does not match')
 
 
 class SHA1Hasher(_CryptographyHasher):
+    """SHA1 hash, full length digest."""
     ENCRYPT_FIRST = False
     PROVIDER = hashes.SHA1()
     def __init__(self, iv):
@@ -80,64 +90,29 @@ class SHA1Hasher(_CryptographyHasher):
 
 
 class MD5Hasher(_CryptographyHasher):
+    """MD5 hash, full length digest."""
     ENCRYPT_FIRST = False
     PROVIDER = hashes.MD5()
     def __init__(self, iv):
         super(MD5Hasher, self).__init__(iv)
 
 
-# The next 2 are specified in RFC 6668
-class SHA256Hasher(_CryptographyHasher):
-    ENCRYPT_FIRST = False
-    PROVIDER = hashes.SHA256()
-    def __init__(self, iv):
-        super(SHA256Hasher, self).__init__(iv)
-
-
-class SHA512Hasher(_CryptographyHasher):
-    ENCRYPT_FIRST = False
-    PROVIDER = hashes.SHA512()
-    def __init__(self, iv):
-        super(SHA512Hasher, self).__init__(iv)
-
-
-class SHA1_96Hasher(SHA1Hasher):
+class SHA1_96Hasher(SHA1Hasher): #pylint: disable=invalid-name
+    """SHA1 hash, short digest."""
     @classproperty
     def digest_size(cls):
         return 12
 
 
-class MD5_96Hasher(MD5Hasher):
+class MD5_96Hasher(MD5Hasher): #pylint: disable=invalid-name
+    """MD5 hash, short digest."""
     @classproperty
     def digest_size(cls):
         return 12
-
-
-class SHA1ETMHasher(SHA1Hasher):
-    ENCRYPT_FIRST = True
-
-
-class MD5ETMHasher(MD5Hasher):
-    ENCRYPT_FIRST = True
-
-
-class SHA256ETMHasher(SHA256Hasher):
-    ENCRYPT_FIRST = True
-
-
-class SHA512ETMHasher(SHA512Hasher):
-    ENCRYPT_FIRST = True
-
-
-class SHA1_96ETMHasher(SHA1_96Hasher):
-    ENCRYPT_FIRST = True
-
-
-class MD5_96ETMHasher(MD5_96Hasher):
-    ENCRYPT_FIRST = True
 
 
 class NoneHasher(BaseHasher):
+    """The 'none' hash used before kex."""
     ENCRYPT_FIRST = False
     def __init__(self, iv=None):
         super(NoneHasher, self).__init__(iv)
@@ -155,6 +130,54 @@ class NoneHasher(BaseHasher):
 
     def validate(self, data, mac):
         pass
+
+
+# The next 2 are specified in RFC 6668
+class SHA256Hasher(_CryptographyHasher):
+    """256-bit SHA2 hash"""
+    ENCRYPT_FIRST = False
+    PROVIDER = hashes.SHA256()
+    def __init__(self, iv):
+        super(SHA256Hasher, self).__init__(iv)
+
+
+class SHA512Hasher(_CryptographyHasher):
+    """512-bit SHA2 hash"""
+    ENCRYPT_FIRST = False
+    PROVIDER = hashes.SHA512()
+    def __init__(self, iv):
+        super(SHA512Hasher, self).__init__(iv)
+
+
+# From Openssh.
+class SHA1ETMHasher(SHA1Hasher):
+    """SHA1 hash, full-length digest, encrypt-then-mac"""
+    ENCRYPT_FIRST = True
+
+
+class MD5ETMHasher(MD5Hasher):
+    """MD5 hash, full-length digest, encrypt-then-mac"""
+    ENCRYPT_FIRST = True
+
+
+class SHA1_96ETMHasher(SHA1_96Hasher): #pylint: disable=invalid-name
+    """SHA1 hash, short digest, encrypt-then-mac"""
+    ENCRYPT_FIRST = True
+
+
+class MD5_96ETMHasher(MD5_96Hasher): #pylint: disable=invalid-name
+    """SHA1 hash, short digest, encrypt-then-mac"""
+    ENCRYPT_FIRST = True
+
+
+class SHA256ETMHasher(SHA256Hasher):
+    """256-bit SHA2 hash, encrypt-then-mac"""
+    ENCRYPT_FIRST = True
+
+
+class SHA512ETMHasher(SHA512Hasher):
+    """512-bit SHA2 hash, encrypt-then-mac"""
+    ENCRYPT_FIRST = True
 
 
 # this is the order openssh does it (I think), which is good enough for me

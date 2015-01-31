@@ -1,30 +1,23 @@
-"""All the messages defined in RFC RFC 4254: Connection protocol
+"""All the messages with a header between 80-127.
+
+Mostly from RFC 4254: Connection protocol
 """
 from pyssh.base_types import Byte, String, Boolean, UInt32
-from pyssh.constants import (SSH_MSG_GLOBAL_REQUEST, SSH_MSG_REQUEST_SUCCESS,
-                             SSH_MSG_REQUEST_FAILURE,
-                             SSH_MSG_CHANNEL_OPEN, SSH_MSG_CHANNEL_CLOSE,
-                             SSH_MSG_CHANNEL_OPEN_CONFIRMATION,
-                             SSH_MSG_CHANNEL_OPEN_FAILURE,
-                             SSH_MSG_CHANNEL_WINDOW_ADJUST,
-                             SSH_MSG_CHANNEL_DATA,
-                             SSH_MSG_CHANNEL_EXTENDED_DATA, SSH_MSG_CHANNEL_EOF,
-                             SSH_MSG_CHANNEL_CLOSE, SSH_MSG_CHANNEL_REQUEST,
-                             SSH_MSG_CHANNEL_SUCCESS, SSH_MSG_CHANNEL_FAILURE,
-                             CHANNEL_TYPE_SESSION,
-                             GLOBAL_REQUEST_TCPIP_FORWARD,
-                             GLOBAL_REQUEST_TCPIP_FORWARD_REPLY,
-                             GLOBAL_REQUEST_CANCEL_TCPIP_FORWARD,
-                             CHANNEL_REQUEST_TYPE_PTY, CHANNEL_REQUEST_TYPE_ENV,
-                             CHANNEL_REQUEST_TYPE_SHELL,
-                             CHANNEL_REQUEST_TYPE_EXEC,
-                             CHANNEL_REQUEST_TYPE_SUBSYSTEM,
-                             CHANNEL_REQUEST_TYPE_WINDOW_CHANGE,
-                             CHANNEL_REQUEST_TYPE_XON_XOFF,
-                             CHANNEL_REQUEST_TYPE_SIGNAL,
-                             CHANNEL_REQUEST_TYPE_EXIT_STATUS,
-                             CHANNEL_REQUEST_TYPE_EXIT_SIGNAL
-                             )
+from pyssh.constants import (
+    SSH_MSG_GLOBAL_REQUEST, SSH_MSG_REQUEST_SUCCESS, SSH_MSG_REQUEST_FAILURE,
+    SSH_MSG_CHANNEL_OPEN, SSH_MSG_CHANNEL_CLOSE,
+    SSH_MSG_CHANNEL_OPEN_CONFIRMATION, SSH_MSG_CHANNEL_OPEN_FAILURE,
+    SSH_MSG_CHANNEL_WINDOW_ADJUST, SSH_MSG_CHANNEL_DATA,
+    SSH_MSG_CHANNEL_EXTENDED_DATA, SSH_MSG_CHANNEL_EOF, SSH_MSG_CHANNEL_CLOSE,
+    SSH_MSG_CHANNEL_REQUEST, SSH_MSG_CHANNEL_SUCCESS, SSH_MSG_CHANNEL_FAILURE,
+    CHANNEL_TYPE_SESSION, GLOBAL_REQUEST_TCPIP_FORWARD,
+    GLOBAL_REQUEST_TCPIP_FORWARD_REPLY, GLOBAL_REQUEST_CANCEL_TCPIP_FORWARD,
+    CHANNEL_REQUEST_TYPE_PTY, CHANNEL_REQUEST_TYPE_ENV,
+    CHANNEL_REQUEST_TYPE_SHELL, CHANNEL_REQUEST_TYPE_EXEC,
+    CHANNEL_REQUEST_TYPE_SUBSYSTEM, CHANNEL_REQUEST_TYPE_WINDOW_CHANGE,
+    CHANNEL_REQUEST_TYPE_XON_XOFF, CHANNEL_REQUEST_TYPE_SIGNAL,
+    CHANNEL_REQUEST_TYPE_EXIT_STATUS, CHANNEL_REQUEST_TYPE_EXIT_SIGNAL
+    )
 
 from .base import Message
 
@@ -82,7 +75,8 @@ class ChannelOpen(Message):
     _REGISTRATION = {}
     SPEC = [('channel_type', String), ('sender_channel', UInt32),
             ('initial_window', UInt32), ('max_packet', UInt32)]
-    def __init__(self, channel_type, sender_channel, initial_window, max_packet):
+    def __init__(self, channel_type, sender_channel, initial_window,
+                 max_packet):
         super(ChannelOpen, self).__init__(self.HEADER)
         self.channel_type = channel_type
         self.sender_channel = sender_channel
@@ -100,7 +94,8 @@ class ChannelOpenConfirmation(Message):
     """Channel Open: Section 5.1"""
     SPEC = [('recipient_channel', UInt32), ('sender_channel', UInt32),
             ('initial_window', UInt32), ('max_packet', UInt32)]
-    def __init__(self, recipient_channel, sender_channel, initial_window, max_packet):
+    def __init__(self, recipient_channel, sender_channel, initial_window,
+                 max_packet):
         super(ChannelOpenConfirmation, self).__init__(self.HEADER)
         self.recipient_channel = recipient_channel
         self.sender_channel = sender_channel
@@ -113,7 +108,8 @@ class ChannelOpenFailure(Message):
     """Channel Open: Section 5.1"""
     SPEC = [('recipient_channel', UInt32), ('reason_code', UInt32),
             ('description', String), ('language_tag', String)]
-    def __init__(self, recipient_channel, reason_code, description, language_tag):
+    def __init__(self, recipient_channel, reason_code, description,
+                 language_tag):
         super(ChannelOpenFailure, self).__init__(self.HEADER)
         self.recipient_channel = recipient_channel
         self.reason_code = reason_code
@@ -241,8 +237,10 @@ class PTYRequest(ChannelRequest):
 class EnvRequest(ChannelRequest):
     """Env Request: Section 6.4"""
     SPEC = [('variable_name', String), ('variable_value', String)]
-    def __init__(self, recipient_channel, want_reply, variable_name, variable_value):
-        super(EnvRequest, self).__init__(recipient_channel, self.REQUEST_TYPE, want_reply)
+    def __init__(self, recipient_channel, want_reply, variable_name,
+                 variable_value):
+        super(EnvRequest, self).__init__(recipient_channel, self.REQUEST_TYPE,
+                                         want_reply)
         self.variable_name = variable_name
         self.variable_value = variable_value
 
@@ -252,14 +250,16 @@ class ShellRequest(ChannelRequest):
     """Shell request: Section 6.5"""
     SPEC = []
     def __init__(self, recipient_channel, want_reply):
-        super(ShellRequest, self).__init__(recipient_channel, self.REQUEST_TYPE, want_reply)
+        super(ShellRequest, self).__init__(recipient_channel, self.REQUEST_TYPE,
+                                           want_reply)
 
 @ChannelRequest.register(String(CHANNEL_REQUEST_TYPE_EXEC))
 class ExecRequest(ChannelRequest):
     """Exec Request: Section 6.5"""
     SPEC = [('command', String)]
     def __init__(self, recipient_channel, want_reply, command):
-        super(ExecRequest, self).__init__(recipient_channel, self.REQUEST_TYPE, want_reply)
+        super(ExecRequest, self).__init__(recipient_channel, self.REQUEST_TYPE,
+                                          want_reply)
         self.command = command
 
 
@@ -268,7 +268,8 @@ class SubsystemRequest(ChannelRequest):
     """Subsystem Request: Section 6.5"""
     SPEC = [('subsystem_name', String)]
     def __init__(self, recipient_channel, want_reply, subsystem_name):
-        super(SubsystemRequest, self).__init__(recipient_channel, self.REQUEST_TYPE, want_reply)
+        super(SubsystemRequest, self).__init__(recipient_channel,
+                                               self.REQUEST_TYPE, want_reply)
         self.subsystem_name = subsystem_name
 
 
@@ -326,7 +327,8 @@ class ExitSignal(ChannelRequest):
     """Returning Exit Signal: Section 6.10"""
     SPEC = [('signal_name', String), ('core_dumped', Boolean),
             ('err_msg', String), ('language_tag', String)]
-    def __init__(self, recipient_channel, signal_name, core_dumped, err_msg, language_tag, want_reply=None):
+    def __init__(self, recipient_channel, signal_name, core_dumped, err_msg,
+                 language_tag, want_reply=None):
         super(ExitSignal, self).__init__(recipient_channel, self.REQUEST_TYPE,
                                          Boolean(False))
         self.signal_name = signal_name

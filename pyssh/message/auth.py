@@ -1,4 +1,6 @@
-"""All the messages defined in RFC 4252: SSH Authentication Protocol
+"""Messages with headers from 50-79.
+
+Mostly RFC 4252: SSH Authentication Protocol
 """
 from __future__ import print_function, division, absolute_import
 from __future__ import unicode_literals
@@ -80,13 +82,15 @@ class PublicKeyAuth(AuthRequest):
 
     @classmethod
     def unpack_from(cls, stream, state, kwargs):
+        """Unpack a public key auth message."""
         # this requires special handling, and it's a mess =\
+        assert state
         for field_name, field_type in cls.SPEC:
             if field_name == 'signature':
                 if not kwargs['signed'].value:
                     break
             kwargs[field_name] = field_type.unpack_from(stream)
-        assert not cls._key
+        assert hasattr(cls, '_key') and not cls._key # pylint:disable=no-member
         return cls(**kwargs)
 
 @Message.register_conditional(Byte(RANGE_USERAUTH_SPECIFIC[0]))
@@ -133,15 +137,17 @@ class KeyboardInteractiveAuth(AuthRequest):
 
 
 class Prompts(Sequence):
+    """A sequence of past prompts."""
     TYPES = (String, Boolean)
 
 
 @Message.register_conditional(Byte(RANGE_USERAUTH_SPECIFIC[0]))
 class UserauthInfoRequest(Message):
     """Userauth info request: Section 3.2"""
-    SPEC = [('name', String), ('instruction', String), ('language', String),
-            ('prompts', Prompts)
-            ]
+    SPEC = [
+        ('name', String), ('instruction', String), ('language', String),
+        ('prompts', Prompts)
+        ]
     SATISFIERS = {'auth_method': SSH_METHOD_KEYBOARD_INTERACTIVE}
     def __init__(self, name, instruction, language, prompts):
         super(UserauthInfoRequest, self).__init__(self.HEADER)
@@ -152,6 +158,7 @@ class UserauthInfoRequest(Message):
 
 
 class Responses(Sequence):
+    """A sequence of string responses."""
     TYPES = (String,)
 
 @Message.register_conditional(Byte(RANGE_USERAUTH_SPECIFIC[1]))

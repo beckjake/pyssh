@@ -111,6 +111,12 @@ class TestKexInit(unittest.TestCase, BaseTransport):
 
         assert inst.random_data == self.random_data
 
+    def test_update(self):
+        inst = super(TestKexInit, self).test_init()
+        inst.update(kex_methods=['hello'])
+        assert inst.kex_methods == ['hello']
+    
+
 
 class TestKexNewKeys(unittest.TestCase, BaseTransport):
     def setUp(self):

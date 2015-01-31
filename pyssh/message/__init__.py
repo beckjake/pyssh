@@ -12,4 +12,5 @@ from __future__ import unicode_literals
 from .base import Message, State
 
 def unpack_from(stream, state):
+    """Unpack a message from a stream and a state."""
     return Message.unpack_from(stream, state, {})
