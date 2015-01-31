@@ -4,286 +4,609 @@
 		"selected_items":
 		[
 			[
-				"CHANNEL_REQUEST_TYPEEX",
-				"CHANNEL_REQUEST_TYPE_EXIT_STATUS"
+				"pakc",
+				"pack_pubkey"
 			],
 			[
-				"CHANNEL_R",
-				"CHANNEL_REQUEST_TYPE_WINDOW_CHANGE"
+				"Kex",
+				"KexDHInit"
 			],
 			[
-				"CHANNEL_REQ",
-				"CHANNEL_REQUEST_TYPE_SUBSYSTEM"
-			],
-			[
-				"CHANNEL",
-				"CHANNEL_REQUEST_TYPE_EXEC"
-			],
-			[
-				"CHANN",
-				"CHANNEL_REQUEST_TYPE_SHELL"
-			],
-			[
-				"CHAN",
-				"CHANNEL_REQUEST_TYPE_PTY"
-			],
-			[
-				"req",
-				"request_name"
-			],
-			[
-				"Demo",
-				"DemoChannelRequest"
-			],
-			[
-				"SSH_MSG_CHANN",
-				"SSH_MSG_CHANNEL_DATA"
-			],
-			[
-				"HE",
-				"header"
-			],
-			[
-				"SSH_M",
-				"SSH_MSG_CHANNEL_OPEN"
-			],
-			[
-				"D",
-				"DemoChannelOpen"
-			],
-			[
-				"SSH_MSG_REQ",
-				"SSH_MSG_REQUEST_FAILURE"
-			],
-			[
-				"Req",
-				"RequestFailure"
-			],
-			[
-				"SSH_MSG_RE",
-				"SSH_MSG_REQUEST_SUCCESS"
-			],
-			[
-				"Au",
-				"AuthRequest"
-			],
-			[
-				"SSH_MSG_D",
-				"SSH_MSG_DEBUG"
-			],
-			[
-				"SSH_MSG_S",
-				"SSH_MSG_DISCONNECT"
-			],
-			[
-				"SSH_MSG",
-				"SSH_MSG_SERVICE_ACCEPT"
-			],
-			[
-				"KEX_DH",
-				"KEX_DH_GROUP1_SHA1"
-			],
-			[
-				"KexDHG",
-				"TestKexDHGroup1Reply"
-			],
-			[
-				"SSH_MSG_KEX",
-				"SSH_MSG_KEXDH_REPLY"
-			],
-			[
-				"By",
-				"BytesIO"
-			],
-			[
-				"KEX_D",
-				"KEX_DH_GROUP1_SHA1"
-			],
-			[
-				"SSH_MSG_K",
-				"SSH_MSG_KEXDH_INIT"
-			],
-			[
-				"B",
-				"BaseTransport"
-			],
-			[
-				"ciph",
-				"ciphers_client_to_server"
-			],
-			[
-				"T",
-				"TestKexInit"
-			],
-			[
-				"some-other-co",
-				"some-other-comp-2"
-			],
-			[
-				"some-ot",
-				"some-other-hash"
-			],
-			[
-				"TestP",
-				"TestPublicKeySigned"
-			],
-			[
-				"fie",
-				"field_type"
-			],
-			[
-				"SSH_MSG_",
-				"SSH_MSG_USERAUTH_REQUEST"
-			],
-			[
-				"SSH_MSG_US",
-				"SSH_MSG_USERAUTH_BANNER"
+				"_ma",
+				"_make_kexdh_init_values"
 			],
 			[
 				"Te",
 				"TestCase"
 			],
 			[
-				"un",
-				"unittest"
+				"Pa",
+				"PacketReader"
 			],
 			[
-				"_c",
-				"_create_demo"
+				"DI",
+				"DiffieHellmanGroup1Sha1"
 			],
 			[
-				"demo",
-				"demo_header"
+				"KEX_DH_",
+				"KEX_DH_GROUP1_SHA1"
+			],
+			[
+				"Diff",
+				"DiffieHellmanGroup14Sha1"
+			],
+			[
+				"Ser",
+				"ServerKexState"
+			],
+			[
+				"kex_hd",
+				"kex_dh_reply"
+			],
+			[
+				"pubk",
+				"public_key"
+			],
+			[
+				"get_",
+				"get_asymmetric_algorithm"
+			],
+			[
+				"get_h",
+				"get_host_pkey"
+			],
+			[
+				"_mak",
+				"_make_kexdh_reply"
+			],
+			[
+				"kex_dh",
+				"kex_dh_init"
+			],
+			[
+				"Clien",
+				"ClientKexState"
+			],
+			[
+				"alg",
+				"algorithm_cls"
+			],
+			[
+				"scl",
+				"sclasses"
+			],
+			[
+				"server_h",
+				"server_host_key"
+			],
+			[
+				"upa",
+				"unpack_from"
+			],
+			[
+				"Form",
+				"FORMAT_STR"
+			],
+			[
+				"form",
+				"FORMAT_STR"
+			],
+			[
+				"dig",
+				"digest"
+			],
+			[
+				"sign",
+				"signature"
+			],
+			[
+				"start",
+				"start_exchange"
+			],
+			[
+				"Ke",
+				"KexDHInit"
+			],
+			[
+				"DSA_P",
+				"_DSA_PRIVATE_KEY"
+			],
+			[
+				"pub",
+				"public_numbers"
+			],
+			[
+				"as",
+				"assert"
+			],
+			[
+				"_RS",
+				"_RSA_PRIVATE_KEY"
+			],
+			[
+				"param",
+				"parameter_numbers"
+			],
+			[
+				"pra",
+				"parameter_numbers"
+			],
+			[
+				"sin",
+				"signed"
+			],
+			[
+				"publi",
+				"public_numbers"
+			],
+			[
+				"pbn",
+				"pubnum"
+			],
+			[
+				"priv",
+				"private_numbers"
+			],
+			[
+				"pr",
+				"privnum"
+			],
+			[
+				"def",
+				"default_backend"
+			],
+			[
+				"publ",
+				"public_numbers"
+			],
+			[
+				"cr",
+				"cryptography"
 			],
 			[
 				"unp",
-				"unpack_from"
+				"unpack_signature"
 			],
 			[
-				"Ba",
-				"BaseType"
+				"RSA",
+				"RSAAlgorithm"
+			],
+			[
+				"par",
+				"parameter_numbers"
+			],
+			[
+				"DSAP",
+				"DSAPublicNumbers"
+			],
+			[
+				"P",
+				"PRIVKEY_CLASS"
 			],
 			[
 				"S",
-				"SSH_MSG_USERAUTH_REQUEST"
+				"String"
 			],
 			[
-				"smart",
-				"smartcov_hook"
+				"FRO",
+				"FORMAT_STR"
 			],
 			[
-				"some-",
-				"some-other-global"
+				"Bs",
+				"BaseAlgorithm"
 			],
 			[
-				"up",
-				"unpack_from"
+				"loa",
+				"load_pem_private_key"
 			],
 			[
-				"secon",
-				"second_inst"
+				"RSAPU",
+				"RSAPublicKey"
 			],
 			[
-				"foo",
-				"foo-method"
+				"pu",
+				"public_key"
+			],
+			[
+				"RS",
+				"RSAPublicNumbers"
+			],
+			[
+				"signature",
+				"signature_blob"
+			],
+			[
+				"signa",
+				"signature_blob"
+			],
+			[
+				"Ba",
+				"BaseAlgorithm"
 			],
 			[
 				"imp",
+				"implemented"
+			],
+			[
+				"load",
+				"load_ssh_public_key"
+			],
+			[
+				"df",
+				"default_backend"
+			],
+			[
+				"dec",
+				"decode_rfc6979_signature"
+			],
+			[
+				"PEM",
+				"PEM_END"
+			],
+			[
+				"rem",
+				"remote_banner"
+			],
+			[
+				"RSAP",
+				"RSAPublicNumbers"
+			],
+			[
+				"KexD",
+				"KexDHReply"
+			],
+			[
+				"loc",
+				"Location"
+			],
+			[
+				"K",
+				"K"
+			],
+			[
+				"None",
+				"None"
+			],
+			[
+				"ipmlemen",
 				"implement"
+			],
+			[
+				"nego",
+				"negotiated"
+			],
+			[
+				"wait",
+				"wait_for_newkeys"
+			],
+			[
+				"wr",
+				"write_message"
+			],
+			[
+				"ban",
+				"_banners"
+			],
+			[
+				"remote_",
+				"_remote_banner"
+			],
+			[
+				"neg",
+				"negotiated"
+			],
+			[
+				"comp",
+				"comp_server_to_client"
+			],
+			[
+				"ciph",
+				"ciphers_server_to_client"
+			],
+			[
+				"server",
+				"server_host_key_algorithms"
+			],
+			[
+				"cli",
+				"client_msg"
+			],
+			[
+				"kex",
+				"kex_methods"
+			],
+			[
+				"remo",
+				"remote_msg"
+			],
+			[
+				"excep",
+				"Exception"
+			],
+			[
+				"raw",
+				"_raw"
+			],
+			[
+				"_sa",
+				"_safe_send"
+			],
+			[
+				"_so",
+				"_socket"
+			],
+			[
+				"rec",
+				"read_packet"
+			],
+			[
+				"client",
+				"_client"
+			],
+			[
+				"_l",
+				"_listener"
+			],
+			[
+				"list",
+				"listening_block"
+			],
+			[
+				"_li",
+				"_listening"
 			],
 			[
 				"b",
 				"b"
 			],
 			[
-				"regist",
-				"register_conditional_method"
+				"Pc",
+				"PacketHandler"
+			],
+			[
+				"get_server_to_client_c",
+				"get_server_to_client_compressor"
+			],
+			[
+				"get_s",
+				"get_server_to_client_cipher"
+			],
+			[
+				"get_cl",
+				"get_client_to_server_hasher"
+			],
+			[
+				"get_c",
+				"get_client_to_server_cipher"
+			],
+			[
+				"pack",
+				"packet_handler"
+			],
+			[
+				"auth",
+				"auth_method"
+			],
+			[
+				"state",
+				"State"
+			],
+			[
+				"SSH_MSG_US",
+				"SSH_MSG_USERAUTH_INFO_RESPONSE"
+			],
+			[
+				"ba",
+				"BaseAuth"
+			],
+			[
+				"a",
+				"_assert_dstreams_equal"
+			],
+			[
+				"Us",
+				"UserauthInfoResponse"
+			],
+			[
+				"sp",
+				"SPEC"
 			],
 			[
 				"reg",
-				"register_method"
+				"register_conditional"
 			],
 			[
-				"return",
-				"return"
+				"SSH_M",
+				"SSH_METHOD_KEYBOARD_INTERACTIVE"
 			],
 			[
-				"_cr",
-				"_create_complex"
+				"propt",
+				"prompts"
 			],
 			[
-				"me",
-				"Message"
+				"v",
+				"values"
 			],
 			[
-				"base",
-				"base"
+				"types",
+				"TYPES"
+			],
+			[
+				"not",
+				"not"
+			],
+			[
+				"UI",
+				"UInt32"
+			],
+			[
+				"pa",
+				"packet_reader"
+			],
+			[
+				"re",
+				"reader"
+			],
+			[
+				"vali",
+				"validator"
+			],
+			[
+				"dc",
+				"decompressor"
+			],
+			[
+				"Ro",
+				"ROT128Cipher"
+			],
+			[
+				"enc",
+				"encrypt_first"
+			],
+			[
+				"hash",
+				"hashers"
+			],
+			[
+				"pad",
+				"pad_size"
+			],
+			[
+				"PA",
+				"PacketReader"
+			],
+			[
+				"val",
+				"validator"
+			],
+			[
+				"U",
+				"UInt32"
+			],
+			[
+				"fir",
+				"first_block_e"
+			],
+			[
+				"decr",
+				"decryptor"
+			],
+			[
+				"encr",
+				"encrypted"
+			],
+			[
+				"f",
+				"first_block_e"
+			],
+			[
+				"blo",
+				"block_size"
+			],
+			[
+				"seq",
+				"sequence_number"
+			],
+			[
+				"com",
+				"comp_client_to_server"
+			],
+			[
+				"serv",
+				"hash_server_to_client"
 			]
 		]
 	},
 	"buffers":
 	[
 		{
-			"contents": "{\n    \"folders\":\n    [\n        {\n            \"follow_symlinks\": true,\n            \"path\": \"${home}/src/pyssh/\"\n        }\n    ],\n    \"settings\":\n    {\n        \"default_line_ending\": \"unix\",\n        \"rulers\": [ 80 ],\n        \"tab_size\": 4,\n        \"translate_tabs_to_spaces\": true,\n        \"trim_trailing_white_space_on_save\": true\n    },\n    \"SublimeLinter\":\n    {\n        \"linters\":\n        {\n            \"pylint\":\n            {\n                \"rcfile\": \"${home}/src/pyssh/etc/pylintrc\",\n                \"paths\": [\"${home}/src/pyssh_venv/lib/site-packages\"]\n            }\n        },\n        \"paths\":\n        {\n            \"windows\": [\"${home}/src/pyssh_venv/Scripts/\"]\n        }\n    }\n\n}\n",
-			"settings":
-			{
-				"buffer_size": 689,
-				"line_ending": "Unix"
-			}
-		},
-		{
 			"file": "project.sublime-project",
 			"settings":
 			{
-				"buffer_size": 308,
+				"buffer_size": 252,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "/C/Users/jake/src/pyssh/pyssh/message/connection.py",
+			"file": "/home/jake/src/pyssh/test/test_packet.py",
 			"settings":
 			{
-				"buffer_size": 15111,
+				"buffer_size": 4920,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "/C/Users/jake/src/pyssh/pyssh/message/base.py",
+			"file": "/home/jake/src/pyssh/test/test_base_types.py",
 			"settings":
 			{
-				"buffer_size": 7909,
+				"buffer_size": 9892,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "/C/Users/jake/src/pyssh/pyssh/base_types.py",
+			"file": "/home/jake/src/pyssh/test/test_crypto/test_asymmetric.py",
 			"settings":
 			{
-				"buffer_size": 7163,
+				"buffer_size": 20318,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "/C/Users/jake/src/pyssh/run_tests.py",
+			"file": "/home/jake/src/pyssh/test/test_kex.py",
 			"settings":
 			{
-				"buffer_size": 1808,
+				"buffer_size": 3008,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "/C/Users/jake/src/pyssh/test/test_message/test_connection.py",
+			"file": "/home/jake/src/pyssh/test/test_transport.py",
 			"settings":
 			{
-				"buffer_size": 10535,
+				"buffer_size": 4916,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "/C/Users/jake/src/pyssh/pyssh/constants.py",
+			"file": "/home/jake/src/pyssh/pyssh/crypto/asymmetric.py",
 			"settings":
 			{
-				"buffer_size": 4598,
+				"buffer_size": 6336,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/jake/src/pyssh/setup.py",
+			"settings":
+			{
+				"buffer_size": 426,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/jake/src/pyssh/pyssh/base_types.py",
+			"settings":
+			{
+				"buffer_size": 8997,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "pytest-cov>=1.8.1\npytest>=2.6.4\npylint>=1.4.0\n",
+			"file": "dev-requirements.txt",
+			"file_size": 45,
+			"file_write_time": 130659591438265655,
+			"settings":
+			{
+				"buffer_size": 46,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/home/jake/src/pyssh/pyssh/kex.py",
+			"settings":
+			{
+				"buffer_size": 8640,
 				"line_ending": "Unix"
 			}
 		}
@@ -324,15 +647,55 @@
 	},
 	"expanded_folders":
 	[
-		"/C/Users/jake/src/pyssh",
-		"/C/Users/jake/src/pyssh/etc",
-		"/C/Users/jake/src/pyssh/pyssh",
-		"/C/Users/jake/src/pyssh/pyssh/message",
-		"/C/Users/jake/src/pyssh/test",
-		"/C/Users/jake/src/pyssh/test/test_message"
+		"/home/jake/src/pyssh",
+		"/home/jake/src/pyssh/etc",
+		"/home/jake/src/pyssh/pyssh",
+		"/home/jake/src/pyssh/pyssh/crypto",
+		"/home/jake/src/pyssh/pyssh/message",
+		"/home/jake/src/pyssh/test",
+		"/home/jake/src/pyssh/test/test_crypto",
+		"/home/jake/src/pyssh/test/test_message"
 	],
 	"file_history":
 	[
+		"/home/jake/src/pyssh/pyssh/constants.py",
+		"/home/jake/src/pyssh/pyssh/message/base.py",
+		"/home/jake/src/pyssh/pyssh/message/__init__.py",
+		"/home/jake/src/pyssh/pyssh/base_types.py",
+		"/home/jake/src/pyssh/pyssh/crypto/symmetric.py",
+		"/home/jake/src/pyssh/pyssh/crypto/hashers.py",
+		"/home/jake/src/pyssh/pyssh/message/tpt.py",
+		"/home/jake/src/pyssh/pyssh/crypto/asymmetric.py",
+		"/home/jake/src/pyssh/pyssh/kex.py",
+		"/home/jake/src/pyssh/pyssh/transport.py",
+		"/home/jake/src/pyssh/test/test_message/test_auth.py",
+		"/home/jake/src/pyssh/test/test_message/test_connection.py",
+		"/home/jake/src/pyssh/test/test_message/test_tpt.py",
+		"/home/jake/src/pyssh/test/test_message/test_base.py",
+		"/home/jake/src/pyssh/test/test_transport.py",
+		"/home/jake/src/pyssh/test/test_crypto/test_symmetric.py",
+		"/home/jake/src/pyssh/test/test_crypto/test_asymmetric.py",
+		"/home/jake/src/pyssh/setup.py",
+		"/home/jake/PyZ3950-2.04/PyZ3950/asn1.py",
+		"/home/jake/src/pyssh/pyssh/message/connection.py",
+		"/home/jake/src/pyssh/pyssh/compression.py",
+		"/home/jake/src/pyssh/test/test_compression.py",
+		"/home/jake/src/pyssh/pyssh/packet.py",
+		"/home/jake/src/pyssh/pyssh/crypto/__init__.py",
+		"/home/jake/src/pyssh/test/test_crypto/test_hashers.py",
+		"/home/jake/.config/sublime-text-3/Packages/User/Preferences.sublime-settings",
+		"/home/jake/src/pyssh/test/test_packet.py",
+		"/home/jake/src/pyssh/pyssh/message/auth.py",
+		"/home/jake/src/pyssh/README.md",
+		"/home/jake/src/pyssh/.gitignore",
+		"/home/jake/src/pyssh/pyssh/crypt.py",
+		"/home/jake/src/pyssh/pyssh/crypto/common.py",
+		"/C/Users/jake/src/pyssh/pyssh/constants.py",
+		"/C/Users/jake/src/pyssh/run_tests.py",
+		"/C/Users/jake/src/pyssh/pyssh/base_types.py",
+		"/C/Users/jake/src/pyssh/pyssh/message/base.py",
+		"/C/Users/jake/src/pyssh/pyssh/message/connection.py",
+		"/C/Users/jake/src/pyssh/test/test_message/test_connection.py",
 		"/C/Users/jake/src/pyssh/pyssh/message/transport.py",
 		"/C/Users/jake/src/pyssh/test/test_base_types.py",
 		"/C/Users/jake/src/pyssh/test/test_message/test_auth.py",
@@ -340,12 +703,9 @@
 		"/C/Users/jake/src/pyssh/test/test_message/test_transport.py",
 		"/C/Users/jake/src/pyssh/test/test_message/test_imports.py",
 		"/C/Users/jake/src/pyssh/README.md",
-		"/C/Users/jake/src/pyssh/pyssh/base_types.py",
 		"/C/Users/jake/src/pyssh/pyssh/message/auth.py",
-		"/C/Users/jake/src/pyssh/pyssh/message/base.py",
 		"/C/Users/jake/AppData/Roaming/Sublime Text 3/Packages/User/Preferences.sublime-settings",
 		"/C/Users/jake/src/pyssh/etc/pytest.ini",
-		"/C/Users/jake/src/pyssh/run_tests.py",
 		"/C/Users/jake/src/pyssh/etc/coveragerc",
 		"/C/Users/jake/src/pyssh/etc/requirements.txt",
 		"/C/Users/jake/src/pyssh/etc/dev-requirements.txt",
@@ -353,7 +713,6 @@
 		"/C/Users/jake/src/pyssh/.coveragerc",
 		"/C/Users/jake/src/pyssh/pyssh/__init__.py",
 		"/C/Users/jake/src/pyssh/pytest_handler.py",
-		"/C/Users/jake/src/pyssh/pyssh/message/connection.py",
 		"/C/Users/jake/src/pyssh/setup.py",
 		"/C/Users/jake/src/pyssh/test/__init__.py",
 		"/C/Users/jake/src/pyssh/test/test_message/__init__.py",
@@ -361,12 +720,11 @@
 		"/C/Users/jake/src/pyssh/etc/smartcov_hook.py",
 		"/C/Users/jake/src/pyssh/test/pytest.ini",
 		"/C/Users/jake/src/pyssh/etc/pylintrc",
-		"/C/Users/jake/src/pyssh/test/test_message/test_connection.py",
 		"/C/Users/jake/src/pyssh/etc/project.sublime-project"
 	],
 	"find":
 	{
-		"height": 64.0
+		"height": 49.0
 	},
 	"find_in_files":
 	{
@@ -381,6 +739,88 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"singledispatch",
+			"SSH_",
+			"MPI",
+			"BaseH",
+			"BaseC",
+			"Packet",
+			"None",
+			"get_comp",
+			"get_asy",
+			"threading",
+			"socket.",
+			"socket",
+			"_Diff",
+			"Direction",
+			"Hash",
+			"SHA1",
+			"Direction",
+			"Location",
+			"TransportError",
+			"Invalid",
+			"Timeout",
+			"Killed",
+			"Negotiated",
+			"negotiate(",
+			"get_asymmetric",
+			"unpack_pubkey",
+			"self.blob",
+			"self.",
+			"pubkey",
+			"p",
+			"sign",
+			"unpack_sig",
+			"FORMAT_ST",
+			"verify_",
+			"verify",
+			"digest.update",
+			"read_pri",
+			"self.r",
+			"privkey",
+			"cls.",
+			"RSAP",
+			"DSAP",
+			"RSAPub",
+			"DSAPub",
+			"PRIVKEY_CL",
+			"base.unpack_fr",
+			"base.u",
+			"get_public_k",
+			"PKCS1v",
+			"DSAP",
+			"RSAPrivateN",
+			"RSAPublicN",
+			"encode_",
+			"6979",
+			"RSA",
+			"anner_exch",
+			"TransportEr",
+			"KexDHI",
+			"write_packet",
+			"State",
+			"St",
+			"State",
+			"St",
+			"get_compressor",
+			"get_",
+			"settimeout",
+			"read_packet",
+			"self.raw.c",
+			"PacketH",
+			"self.socket",
+			"transport",
+			"NoneCompression",
+			"mode",
+			"writer.write",
+			"reader.",
+			"auth_method",
+			"PK_OK",
+			"_seq",
+			"UInt32.",
+			"hash_algor",
+			"self.iv",
+			"CipherSpec",
 			"self",
 			"ChannelSu",
 			"SATISFIERS",
@@ -428,6 +868,10 @@
 		"regex": false,
 		"replace_history":
 		[
+			"unpack_fr",
+			"self._socket",
+			"tpt",
+			"NoneCompressor",
 			"request_name",
 			"'",
 			"unpack_from",
@@ -443,23 +887,24 @@
 	"groups":
 	[
 		{
-			"selected": 2,
+			"selected": 4,
 			"sheets":
 			[
 				{
 					"buffer": 0,
+					"file": "project.sublime-project",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 689,
+						"buffer_size": 252,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								428,
-								428
+								252,
+								252
 							]
 						],
 						"settings":
@@ -472,52 +917,24 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 7,
+					"stack_index": 10,
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "project.sublime-project",
+					"file": "/home/jake/src/pyssh/test/test_packet.py",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 308,
+						"buffer_size": 4920,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								249,
-								249
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JSON.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "/C/Users/jake/src/pyssh/pyssh/message/connection.py",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 15111,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								8199,
-								8199
+								4920,
+								4920
 							]
 						],
 						"settings":
@@ -527,19 +944,79 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 6429.0,
+						"translation.y": 3287.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 9,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "/home/jake/src/pyssh/test/test_base_types.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 9892,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								322,
+								322
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2178.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
 					"type": "text"
 				},
 				{
 					"buffer": 3,
-					"file": "/C/Users/jake/src/pyssh/pyssh/message/base.py",
+					"file": "/home/jake/src/pyssh/test/test_crypto/test_asymmetric.py",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 7909,
+						"buffer_size": 20318,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								11124,
+								11124
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2475.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "/home/jake/src/pyssh/test/test_kex.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3008,
 						"regions":
 						{
 						},
@@ -552,6 +1029,94 @@
 						],
 						"settings":
 						{
+							"syntax": "Packages/Python/Python.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 693.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "/home/jake/src/pyssh/test/test_transport.py",
+					"semi_transient": true,
+					"settings":
+					{
+						"buffer_size": 4916,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2253,
+								2253
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1683.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "/home/jake/src/pyssh/pyssh/crypto/asymmetric.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 6336,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3704,
+								3704
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2871.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "/home/jake/src/pyssh/setup.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 426,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								66,
+								66
+							]
+						],
+						"settings":
+						{
 							"syntax": "Packages/Python/Python.tmLanguage",
 							"tab_size": 4,
 							"translate_tabs_to_spaces": true
@@ -560,24 +1125,24 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 6,
+					"stack_index": 7,
 					"type": "text"
 				},
 				{
-					"buffer": 4,
-					"file": "/C/Users/jake/src/pyssh/pyssh/base_types.py",
+					"buffer": 8,
+					"file": "/home/jake/src/pyssh/pyssh/base_types.py",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 7163,
+						"buffer_size": 8997,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2435,
-								2435
+								2234,
+								2234
 							]
 						],
 						"settings":
@@ -587,33 +1152,61 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 1651.0,
+						"translation.y": 1683.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "dev-requirements.txt",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 46,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								46,
+								46
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 8,
 					"type": "text"
 				}
 			]
 		},
 		{
-			"selected": 1,
+			"selected": 0,
 			"sheets":
 			[
 				{
-					"buffer": 5,
-					"file": "/C/Users/jake/src/pyssh/run_tests.py",
+					"buffer": 10,
+					"file": "/home/jake/src/pyssh/pyssh/kex.py",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1808,
+						"buffer_size": 8640,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1104,
-								1104
+								6902,
+								6902
 							]
 						],
 						"settings":
@@ -623,66 +1216,10 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 639.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "/C/Users/jake/src/pyssh/test/test_message/test_connection.py",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 10535,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								10535,
-								10535
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Python/Python.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 9111.0,
+						"translation.y": 5224.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "/C/Users/jake/src/pyssh/pyssh/constants.py",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 4598,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2817,
-								2846
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Python/Python.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 2014.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
 					"type": "text"
 				}
 			]
@@ -690,7 +1227,7 @@
 	],
 	"incremental_find":
 	{
-		"height": 39.0
+		"height": 41.0
 	},
 	"input":
 	{
@@ -733,7 +1270,7 @@
 	"project": "project.sublime-project",
 	"replace":
 	{
-		"height": 120.0
+		"height": 92.0
 	},
 	"save_all_on_build": true,
 	"select_file":

@@ -64,7 +64,7 @@ class PacketBuilder(PacketHandler):
         # now pad to the nearest block size bytes. note that this includes the
         # length fields
         padded = self.pad_payload(payload)
-        encrypted = self.encryptor.encrypt(padded)
+        encrypted = self.encryptor.process_block(padded)
         if self.hasher.ENCRYPT_FIRST:
             hmac = self.hasher.hash(self._sequence_pack() + encrypted)
         else:
@@ -168,7 +168,7 @@ class PacketReader(PacketHandler):
         """Read in a packet using the reader. If hashed, validate the hash with
         the following mac.
         """
-        encrypted, decrypted = self._decrypt_packet(reader)
+        decrypted, encrypted = self._decrypt_packet(reader)
 
         if hashed:
             self.validate_packet(encrypted, decrypted,

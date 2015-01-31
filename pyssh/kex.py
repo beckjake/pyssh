@@ -225,7 +225,7 @@ class _DiffieHellManGroupSha1Method(BaseMethod):
         y = SYS_RANDOM.randint(1, (self.P - 3)//2)
         f = MPInt(pow(self.G, y, self.P))
         K = MPInt(pow(kex_dh_init.e.value, y, self.P))
-        return f, K
+        return y, f, K
 
     def wait_exchange(self, transport):
         """Perform the server side of key exchange."""
@@ -234,7 +234,7 @@ class _DiffieHellManGroupSha1Method(BaseMethod):
         algorithm.privkey = transport.get_host_privkey(key_type)
 
         kex_dh_init = transport.read_msg(types=[tpt.KexDHInit])
-        f, K = self._make_kexdh_reply_values(kex_dh_init)
+        _, f, K = self._make_kexdh_reply_values(kex_dh_init)
 
         k_s = String(algorithm.pack_pubkey())
         H = self._calculate_kexdh_hash(k_s, kex_dh_init.e, f, K)
@@ -252,7 +252,7 @@ class _DiffieHellManGroupSha1Method(BaseMethod):
         """
         e, x = self._make_kexdh_init_values()
         kex_dh_init = self.INIT_CLS(MPInt(e)) # pylint:disable=not-callable
-        transport.send_msgc(kex_dh_init)
+        transport.send_msg(kex_dh_init)
         kex_dh_reply = transport.read_msg(types=[tpt.KexDHReply])
 
         K = MPInt(pow(e, x, self.P))

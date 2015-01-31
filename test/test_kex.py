@@ -176,3 +176,12 @@ class TestDHGroup14(unittest.TestCase, ExchangeTest):
         self.K = MPInt(9)
         self.hashval = b'\x9B\xAC\x7F\x8B\x2E\x8B\x59\x96\xE0\x7A\xE8\x34\x14\x32\x10\x59\x88\x0D\x8E\x5D'
 
+
+class TestGetKex(unittest.TestCase):
+    def test_exists(self):
+        assert kex.get_kex_handler(b'diffie-hellman-group1-sha1') is \
+               kex.DiffieHellmanGroup1Sha1
+
+    def test_not_exists(self):
+        with pytest.raises(kex.InvalidKexMethod):
+            kex.get_kex_handler(b'no-such-method')
