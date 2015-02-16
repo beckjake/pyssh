@@ -43,25 +43,25 @@ class BaseTransport(object):
 class TestKexInit(unittest.TestCase, BaseTransport):
     def setUp(self):
         self.header = Byte(SSH_MSG_KEXINIT)
-        self.kex_methods = NameList(['some-method', 'some-other-method'])
-        self.server_host_key_algorithms = NameList(['some-algorithm',
-                                                    'some-other-algorithm'])
-        self.ciphers_client_to_server = NameList(['some-cipher',
-                                                  'some-other-cipher'])
-        self.ciphers_server_to_client = NameList(['some-cipher-2',
-                                                  'some-other-cipher-2'])
-        self.hashes_client_to_server = NameList(['some-hash',
-                                                 'some-other-hash'])
-        self.hashes_server_to_client = NameList(['some-hash-2',
-                                                 'some-other-hash-2'])
-        self.comp_client_to_server = NameList(['some-comp',
-                                               'some-other-comp'])
-        self.comp_server_to_client = NameList(['some-comp-2',
-                                               'some-other-comp-2'])
-        self.languages_client_to_server = NameList(['some-language',
-                                                    'some-other-language'])
-        self.languages_server_to_client = NameList(['some-language-2',
-                                                    'some-other-language-2'])
+        self.kex_methods = NameList([b'some-method', b'some-other-method'])
+        self.server_host_key_algorithms = NameList([b'some-algorithm',
+                                                    b'some-other-algorithm'])
+        self.ciphers_client_to_server = NameList([b'some-cipher',
+                                                  b'some-other-cipher'])
+        self.ciphers_server_to_client = NameList([b'some-cipher-2',
+                                                  b'some-other-cipher-2'])
+        self.hashes_client_to_server = NameList([b'some-hash',
+                                                 b'some-other-hash'])
+        self.hashes_server_to_client = NameList([b'some-hash-2',
+                                                 b'some-other-hash-2'])
+        self.comp_client_to_server = NameList([b'some-comp',
+                                               b'some-other-comp'])
+        self.comp_server_to_client = NameList([b'some-comp-2',
+                                               b'some-other-comp-2'])
+        self.languages_client_to_server = NameList([b'some-language',
+                                                    b'some-other-language'])
+        self.languages_server_to_client = NameList([b'some-language-2',
+                                                    b'some-other-language-2'])
         self.first_kex_message_follows = Boolean(False)
         data = os.urandom(16)
         print(data)
@@ -113,9 +113,9 @@ class TestKexInit(unittest.TestCase, BaseTransport):
 
     def test_update(self):
         inst = super(TestKexInit, self).test_init()
-        inst.update(kex_methods=['hello'])
-        assert inst.kex_methods == ['hello']
-    
+        inst.update(kex_methods=[b'hello'])
+        assert inst.kex_methods == [b'hello']
+
 
 
 class TestKexNewKeys(unittest.TestCase, BaseTransport):

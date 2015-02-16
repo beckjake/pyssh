@@ -215,12 +215,12 @@ class TestNameList(unittest.TestCase):
 
     def test_one(self):
         data = b'\x00\x00\x00\x04\x7A\x6C\x69\x62'
-        expect = base_types.NameList([u'zlib'])
+        expect = base_types.NameList([b'zlib'])
         _assert_dstreams_equal(base_types.NameList, data, expect)
 
     def test_two(self):
         data = b'\x00\x00\x00\x09\x7A\x6C\x69\x62\x2C\x6E\x6F\x6E\x65'
-        expect = base_types.NameList([u'zlib', u'none'])
+        expect = base_types.NameList([b'zlib', b'none'])
         _assert_dstreams_equal(base_types.NameList, data, expect)
 
     def test_already_namelist(self):

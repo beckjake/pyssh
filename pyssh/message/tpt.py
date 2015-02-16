@@ -56,7 +56,10 @@ class KexInit(Message):
         self.languages_client_to_server = languages_client_to_server
         self.languages_server_to_client = languages_server_to_client
         self.first_kex_message_follows = first_kex_message_follows
-        self.random_data = os.urandom(16) if random_data is None else random_data
+        if random_data is None:
+            self.random_data = RawByte16(os.urandom(16))
+        else:
+            self.random_data = random_data
         print(random_data)
         print(self.random_data)
         self.reserved = UInt32(0) if reserved is None else reserved

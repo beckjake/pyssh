@@ -255,14 +255,17 @@ class NameList(_LPrefixed):
             value = value.value
         super(NameList, self).__init__(tuple(value))
 
+    def __iter__(self):
+        return iter(self.value)
+
     def _packdata(self):
-        return b','.join(x.encode('ascii') for x in self.value)
+        return b','.join(self.value)
 
     @classmethod
     def _unpackdata(cls, data):
         if not data:
             return cls(())
-        return cls(x.decode('ascii') for x in data.split(b','))
+        return cls(data.split(b','))
 
 
 # A base composite type.

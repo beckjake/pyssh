@@ -266,10 +266,10 @@ class _DiffieHellManGroupSha1Method(BaseMethod):
         key_type = self.negotiated.server_host_key_algorithm
         algorithm = get_asymmetric_algorithm(key_type)
         algorithm.unpack_pubkey(io.BytesIO(kex_dh_reply.k_s.value))
-        algorithm.verify(kex_dh_reply.h_sig.value, H)
+        algorithm.verify_signature(kex_dh_reply.h_sig.value, H.value)
 
         if self.session_id is None:
-            self.session_id = H
+            self.session_id = H.value
         return ClientKexState(self.HASH, K, H, self.negotiated, self.session_id)
 
 

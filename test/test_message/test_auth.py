@@ -73,7 +73,7 @@ class TestAuthRequest(unittest.TestCase, BaseAuth):
 class TestAuthFailure(unittest.TestCase, BaseAuth):
     def setUp(self):
         self.header = Byte(SSH_MSG_USERAUTH_FAILURE)
-        self.auth_continue = NameList(['foo-auth', 'bar-auth'])
+        self.auth_continue = NameList([b'foo-auth', b'bar-auth'])
         self.partial = Boolean(False)
 
         self.cls = auth.AuthFailure

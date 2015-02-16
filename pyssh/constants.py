@@ -133,7 +133,7 @@ ENC_SSH_RSA = b'ssh-rsa'
 MAX_WINDOW_SIZE = (2 ** 32) - 1
 # 2MB/64KB seems to be pretty common...
 WINDOW_SIZE = 2 * (2 ** 20)
-MAX_PACKET = 64 * (1 ** 10)
+MAX_PACKET = 64 * (2 ** 10)
 
 
 VALID_SIGNAL_NAMES = [

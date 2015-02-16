@@ -1,4 +1,4 @@
-    
+
 import unittest
 import pytest
 import io
@@ -13,15 +13,39 @@ class DummyCipher(object):
     def __init__(self, block_size):
         self.block_size = block_size
 
+class Object(object):
+    pass
+
 
 class TestPadding(unittest.TestCase):
     """Test padding messages to some length."""
-    def _some_pad(self, num):
+    def _some_eam_pad(self, num):
         encryptor = DummyCipher(num)
-        hasher = object()
-        compressor = object()
+        hasher = Object()
+        hasher.ENCRYPT_FIRST = False
+        compressor = Object()
         builder = packet.PacketBuilder(encryptor, hasher, compressor)
-        assert len(builder.pad_payload(b'\x00')) % num == 0
+        padded_length = len(builder.pad_packet(b'\x00', True))
+
+        assert padded_length % num == 0
+        # secondary goal
+        assert 4 <= (padded_length - 6) <= 4 + num
+
+    def _some_etm_pad(self, num):
+        encryptor = DummyCipher(num)
+        hasher = Object()
+        hasher.ENCRYPT_FIRST = True
+        compressor = Object()
+        builder = packet.PacketBuilder(encryptor, hasher, compressor)
+        padded_length = len(builder.pad_packet(b'\x00', False))
+
+        assert padded_length % num == 4
+        # secondary goal
+        assert 4 <= (padded_length - 6) <= 4 + num
+
+    def _some_pad(self, num):
+        self._some_etm_pad(num)
+        self._some_eam_pad(num)
 
     def test_pad_8(self):
         self._some_pad(8)
@@ -66,14 +90,13 @@ class TestNoneBidi(unittest.TestCase):
     def test_create(self):
         payload = b'\x00'
         expect = b'\x00\x00\x00\x0C\x0A\x00'
-        pad_size = 10
         built = self.builder.create_packet(payload)
         assert built.startswith(expect)
         reader = io.BytesIO(built)
         assert self.packet_reader.read_packet(reader) == payload
 
     def test_toolong(self):
-        payload = b'\x00'* (1024 * (1 ** 10))
+        payload = b'\x00'* (1024 * (2 ** 10))
         with pytest.raises(ValueError):
             self.builder.create_packet(payload)
 
@@ -90,14 +113,14 @@ class TestBidi(unittest.TestCase):
         self.packet_reader = packet.PacketReader(decryptor, validator, decompressor)
 
     # TODO: fix this test.
-    @pytest.mark.xfail
+    #@pytest.mark.xfail
     def test_create(self):
         payload = b'\x00\x01\x02\x03'
         expect = b'\x80\x80\x80\x8C\x87'
         built = self.builder.create_packet(payload)
         assert built.startswith(expect)
         reader = io.BytesIO(built)
-        assert self.packet_reader.read_packet(reader, True) == payload
+        assert self.packet_reader.read_packet(reader) == payload
 
     def test_write(self):
         payload = b'\x00\x01\x02\x03'
@@ -108,9 +131,9 @@ class TestBidi(unittest.TestCase):
 
     def test_read(self):
         payload = b'\x00\x01\x02\x03'
-        built = b'\x80\x80\x80\x8C\x87\x80\x81\x82\x83\xE7\x76\x1C\x99\x89\x8C\x77\x9A\x7A\xBE\x1B\xB6\x63\x96\xBE\x9F\x83\x9B\x62\x37\x77\xC2\x72'
+        built = b'\x80\x80\x80\x90\x8B\x80\x81\x82\x83\x82\x78\x13\xA9\xF4\x2A\xC4\x97\x6A\x8C\xE1\x4A\x99\xD7\xF1\xEA\x71\x91\x3B\x7E\xB2\xC8\xF1\x18\x93\xA8\x56'
         reader = io.BytesIO(built)
-        assert self.packet_reader.read_packet(reader, True) == payload
+        assert self.packet_reader.read_packet(reader) == payload
 
 
 class TestBidiETM(unittest.TestCase):
@@ -126,22 +149,22 @@ class TestBidiETM(unittest.TestCase):
 
     def test_create(self):
         payload = b'\x00\x01\x02\x03'
-        expect = b'\x80\x80\x80\x8C\x87'
+        expect = b'\x00\x00\x00\x10\x8B'
         built = self.builder.create_packet(payload)
         assert built.startswith(expect)
         reader = io.BytesIO(built)
-        assert self.packet_reader.read_packet(reader, True) == payload
+        assert self.packet_reader.read_packet(reader) == payload
 
     def test_write(self):
         payload = b'\x00\x01\x02\x03'
-        expect = b'\x80\x80\x80\x8C\x87'
+        expect = b'\x00\x00\x00\x10\x8B'
         writer = io.BytesIO(b'')
         self.builder.write_packet(writer, payload)
         assert writer.getvalue().startswith(expect)
 
     def test_read(self):
         payload = b'\x00\x01\x02\x03'
-        built = b'\x80\x80\x80\x8C\x87\x80\x81\x82\x83\x29\x8E\x35\x7D\xE0\x25\x37\x89\x98\xAF\x55\x42\x23\x00\xE8\x86\x07\xFE\x90\x41\xF8\xE1\x5D'
+        built = b'\x00\x00\x00\x10\x8B\x80\x81\x82\x83\x6C\x0B\x80\x55\x11\xD0\xF1\x89\x0C\x53\x31\x67\x82\xBA\x6D\x2A\x7E\x57\x8D\xEB\xAB\xD5\x70\x83\x9C\xC5\x67'
         reader = io.BytesIO(built)
-        assert self.packet_reader.read_packet(reader, True) == payload
+        assert self.packet_reader.read_packet(reader) == payload
 

@@ -194,16 +194,20 @@ class Transport(object):
         self._raw = raw
         self.state = State()
         self._remote_banner = None
+        self._prefix = None
 
     @classmethod
     def from_addr(cls, addr):
         """Return a transport using an address."""
         return cls(RawTransport.from_addr(addr))
 
-    def read_msg(self):
+    def read_msg(self, types=None):
         """Read in a message from the remote system."""
         payload = self._raw.read_packet()
-        return unpack_from(io.BytesIO(payload), self.state)
+        msg = unpack_from(io.BytesIO(payload), self.state)
+        if types:
+            assert isinstance(msg, tuple(types))
+        return msg
 
     def send_msg(self, msg):
         """Send a message to the remote system."""
@@ -275,15 +279,19 @@ class Transport(object):
             LOG.debug('Got remote msg: {}'.format(remote_msg))
         else:
             LOG.debug('Using existing remote msg: {}'.format(local_msg))
+        self._prefix = b''.join((self.LOCAL_BANNER, self._remote_banner,
+                                 local_msg.pack(), remote_msg.pack()))
         return self._negotiate(local_msg, remote_msg)
 
     def start_kex(self):
         """Start the key exchange process, unilaterally."""
         negotiated = self._send_kex_messages()
         kex_handler = get_kex_handler(negotiated.kex_method)
+        self.state.kex_method = negotiated.kex_method
+        kex_handler = kex_handler(negotiated, self._prefix)
         # delegate performing the exchange to the handler - it will only know
         # about sending and receiving messages.
-        kex_state = kex_handler.start_kex(self)
+        kex_state = kex_handler.start_exchange(self)
         self.send_msg(tpt.KexNewkeys())
         self._raw.packet_builder = kex_state.get_builder()
         # TODO: more stuff
