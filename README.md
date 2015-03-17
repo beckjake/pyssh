@@ -12,11 +12,12 @@ What works:
     - Compressing
     - Asymmetric crypto
     - Symmetric crypto
-    - 99%+ test coverage
+    - Kex
+    - 95%+ test coverage
 
 What doesn't work in order of likelihood to get fixed:
 ------------------------------------------------------
-    - Kex
+    - 99%+ test coverage
     - The rest of the protocol
     - Security
     - Stability
