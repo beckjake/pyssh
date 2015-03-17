@@ -4,6 +4,7 @@ from __future__ import print_function, division, absolute_import
 from __future__ import unicode_literals
 
 import io
+import logging
 from collections import OrderedDict
 from random import SystemRandom
 
@@ -25,6 +26,7 @@ from pyssh.constants import (
 from pyssh.base_types import Direction, MPInt, String
 from pyssh.message import tpt
 
+LOG = logging.getLogger(__name__)
 SYS_RANDOM = SystemRandom()
 
 class InvalidKexMethod(Exception):
@@ -38,11 +40,11 @@ class BaseKexState(object):
     S_TO_C = None
     def __init__(self, hash_algorithm, K, H, negotiated, session_id=None):
         self.hash_algorithm = hash_algorithm
-        self._K = self._KPacked = None
+        self._K = self._KPacked = self._H = self._HPacked = None
         self.K = K
         self.H = H
         self.negotiated = negotiated
-        self.session_id = self.H if session_id is None else session_id
+        self.session_id = self.H.value if session_id is None else session_id
 
     @property
     def K(self):
@@ -55,6 +57,17 @@ class BaseKexState(object):
         self._K = value
         self._KPacked = value.pack()
 
+    @property
+    def H(self):
+        """Store H both packed and unpacked."""
+        return self._H
+
+    @H.setter
+    def H(self, value):
+        """Setter for H."""
+        self._H = value
+        self._HPacked = value.pack()
+
     def _hash_iter(self, start, keysize):
         """Use the iterative hashing algorithm to generate up the keysize."""
         digest_size = self.hash_algorithm.digest_size
@@ -63,7 +76,7 @@ class BaseKexState(object):
         while sofar < keysize:
             digest = Hash(self.hash_algorithm, default_backend())
             digest.update(self._KPacked)
-            digest.update(self.H)
+            digest.update(self._HPacked)
             digest.update(data)
             data = digest.finalize()
             yield data[:keysize-sofar]
@@ -209,12 +222,26 @@ class _DiffieHellManGroupSha1Method(BaseMethod):
 
         # H = hash(V_C || V_S || I_C || I_S || K_S || e || f || K)
         digest = Hash(self.HASH, default_backend())
-        digest.update(self.prefix)
-        digest.update(host_key.pack())
-        digest.update(e.pack())
-        digest.update(f.pack())
-        digest.update(K.pack())
-        return String(digest.finalize())
+        LOG.debug('prefix={!r}'.format(self.prefix))
+        LOG.debug('host_key={!r}'.format(host_key.value))
+        LOG.debug('e={!r}'.format(e.value))
+        LOG.debug('f={!r}'.format(f.value))
+        LOG.debug('K={!r}'.format(K.value))
+        contents = b''.join((
+            String(self.prefix.client_banner).pack(),
+            String(self.prefix.server_banner).pack(),
+            String(self.prefix.client_init).pack(),
+            String(self.prefix.server_init).pack(),
+            String(host_key.value).pack(),
+            e.pack(),
+            f.pack(),
+            K.pack()
+        ))
+        LOG.debug('Full hash source: {!r}'.format(contents))
+        digest.update(contents)
+        value = digest.finalize()
+        LOG.debug('Hash={!r}'.format(value))
+        return String(value)
 
     def _make_kexdh_reply_values(self, kex_dh_init):
         """S generates a random number y (0 < y < q) and computes f = g^y mod p.
@@ -243,7 +270,7 @@ class _DiffieHellManGroupSha1Method(BaseMethod):
         kex_dh_reply = self.REPLY_CLS(k_s, f, h_sig) # pylint:disable=not-callable
         transport.send_msg(kex_dh_reply)
         if self.session_id is None:
-            self.session_id = H
+            self.session_id = H.value
         return ServerKexState(self.HASH, K, H, self.negotiated, self.session_id)
 
     def start_exchange(self, transport):
@@ -255,7 +282,7 @@ class _DiffieHellManGroupSha1Method(BaseMethod):
         transport.send_msg(kex_dh_init)
         kex_dh_reply = transport.read_msg(types=[tpt.KexDHReply])
 
-        K = MPInt(pow(e, x, self.P))
+        K = MPInt(pow(kex_dh_reply.f.value, x, self.P))
         H = self._calculate_kexdh_hash(
             kex_dh_reply.k_s,
             kex_dh_init.e,
@@ -266,6 +293,11 @@ class _DiffieHellManGroupSha1Method(BaseMethod):
         key_type = self.negotiated.server_host_key_algorithm
         algorithm = get_asymmetric_algorithm(key_type)
         algorithm.unpack_pubkey(io.BytesIO(kex_dh_reply.k_s.value))
+        LOG.debug('e={}'.format(e))
+        LOG.debug('x={}'.format(x))
+        LOG.debug('P={}'.format(self.P))
+        LOG.debug('Verifying signature={!r}'.format(kex_dh_reply.h_sig.value))
+        LOG.debug('H={!r}'.format(H.value))
         algorithm.verify_signature(kex_dh_reply.h_sig.value, H.value)
 
         if self.session_id is None:

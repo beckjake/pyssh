@@ -45,6 +45,10 @@ class TransportError(Exception):
     """Generic transport-level error."""
 
 
+HashParts = namedtuple('HashParts',
+                       'client_banner server_banner client_init server_init')
+
+
 class RawTransport(object):
     """A raw transport. Knows about packets but not messages.
     """
@@ -264,10 +268,14 @@ class Transport(object):
         """Run the negotiation algorithm between local and remote messages."""
         raise NotImplementedError('implement in subclasses')
 
+    def _set_prefix(self, local_msg, remote_msg):
+        """Set the prefix value."""
+        raise NotImplementedError('implement in subclasses')
+
     def _send_kex_messages(self, remote_msg=None):
         """Send/receive KexInit.
 
-        If remote_msg is not set, we didn't get it yet.
+        If remote_msg is not set, we didn't get it yet
         """
         assert self._remote_banner
         self.state.in_kex = True
@@ -278,9 +286,8 @@ class Transport(object):
             remote_msg = self.read_msg()
             LOG.debug('Got remote msg: {}'.format(remote_msg))
         else:
-            LOG.debug('Using existing remote msg: {}'.format(local_msg))
-        self._prefix = b''.join((self.LOCAL_BANNER, self._remote_banner,
-                                 local_msg.pack(), remote_msg.pack()))
+            LOG.debug('Using existing remote msg: {}'.format(remote_msg))
+        self._set_prefix(local_msg, remote_msg)
         return self._negotiate(local_msg, remote_msg)
 
     def start_kex(self):
@@ -314,6 +321,10 @@ class ClientTransport(Transport):
     def _negotiate(self, local_msg, remote_msg):
         return negotiate(local_msg, remote_msg)
 
+    def _set_prefix(self, local_msg, remote_msg):
+        self._prefix = HashParts(self.LOCAL_BANNER, self._remote_banner,
+                                 local_msg.pack(), remote_msg.pack())
+
 
 class ServerTransport(Transport):
     """A server-side Transport."""
@@ -326,3 +337,6 @@ class ServerTransport(Transport):
         """Retrieve the host private key, based on the specified key type."""
         return self.HOST_KEYS[key_type]
 
+    def _set_prefix(self, local_msg, remote_msg):
+        self._prefix = HashParts(self._remote_banner, self.LOCAL_BANNER,
+                                 remote_msg.pack(), local_msg.pack())

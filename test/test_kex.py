@@ -55,6 +55,7 @@ class KexTest(object):
 class TestClientKex(unittest.TestCase, KexTest):
     def create(self):
         self.K = MPInt(0xFFFFFFFF)
+        self.H = String(b'\x00'*32)
         negotiated = transport.Negotiated(
             b'diffie-hellman-group1-sha1',
             b'ssh-dss',
@@ -65,13 +66,14 @@ class TestClientKex(unittest.TestCase, KexTest):
             b'none',
             b'none'
             )
-        inst = kex.ClientKexState(SHA1(), self.K, b'\x00'*32, negotiated)
+        inst = kex.ClientKexState(SHA1(), self.K, self.H, negotiated)
         return inst
 
 
 class TestServerKex(unittest.TestCase, KexTest):
     def create(self):
         self.K = MPInt(0xFFFFFFFF)
+        self.H = String(b'\x00'*32)
         negotiated = transport.Negotiated(
             b'diffie-hellman-group1-sha1',
             b'ssh-dss',
@@ -82,7 +84,7 @@ class TestServerKex(unittest.TestCase, KexTest):
             b'none',
             b'none'
             )
-        inst = kex.ServerKexState(SHA1(), self.K, b'\x00'*32, negotiated)
+        inst = kex.ServerKexState(SHA1(), self.K, self.H, negotiated)
         return inst
 
 
@@ -142,7 +144,7 @@ class ExchangeTest(object):
         dh_reply = tport.read_msg.return_value
         dh_reply.f = self.f
         dh_reply.k_s = self.host_key
-        
+
         inst = self.create()
         with mock.patch.object(inst, '_make_kexdh_init_values') as patch:
             patch.return_value = self.e.value, 0
@@ -169,12 +171,12 @@ class TestDHGroup14(unittest.TestCase, ExchangeTest):
             b'none'
         )
         self.host_key = String(b'\x00\x00')
-        self.prefix = b'\x00'*50
+        self.prefix = transport.HashParts(b'\x00'*10, b'\x00'*10, b'\x00'*10, b'\x00'*10)
         self.e = MPInt(3)
         self.f = MPInt(2)
         self.f = MPInt(10)
         self.K = MPInt(9)
-        self.hashval = b'\x9B\xAC\x7F\x8B\x2E\x8B\x59\x96\xE0\x7A\xE8\x34\x14\x32\x10\x59\x88\x0D\x8E\x5D'
+        self.hashval = b'\xF5\xF8\x79\x04\xC9\xC5\xC2\x00\xE3\xB2\xF5\xC3\xD3\xBD\x03\x24\x42\x6B\x6B\xB9'
 
 
 class TestGetKex(unittest.TestCase):
