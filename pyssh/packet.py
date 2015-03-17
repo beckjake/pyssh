@@ -117,8 +117,8 @@ class PacketBuilder(PacketHandler):
         if pad_size < 4:
             pad_size += self.block_size
 
-        padded =  (_PACKETLENGTHS.pack(len(payload) + 1 + pad_size, pad_size) +
-                   payload + os.urandom(pad_size))
+        padded = (_PACKETLENGTHS.pack(len(payload) + 1 + pad_size, pad_size) +
+                  payload + os.urandom(pad_size))
 
         LOG.debug('length-prefixed, padded: {!r}'.format(padded))
 
@@ -147,6 +147,11 @@ class PacketReader(PacketHandler):
         self.decompressor = decompressor
 
     def decrypt_etm_packet(self, reader):
+        """Decrypt ETM (encrypt-then-mac) packets.
+
+        :param reader: An object that provides a .read() method, intended to be
+            a Transport.
+        """
         # in ETM mode, the first 4 bytes are hashed but not encrypted
         length_as_bytes = reader.read(4)
         packet_length = U32.unpack_from(length_as_bytes)[0]
@@ -168,6 +173,11 @@ class PacketReader(PacketHandler):
         return self._strip_padding(decrypted, packet_length)
 
     def decrypt_eam_packet(self, reader):
+        """Decrypt EAM (encrypt-and-mac) packets.
+
+        :param reader: An object that provides a .read() method, intended to be
+            a Transport.
+        """
         # in regular mode the first 4 bytes are encrypted but not hashed
         decrypted = io.BytesIO()
         # decrypt the first block, pull out the packet length for later
