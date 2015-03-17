@@ -101,7 +101,7 @@ class RawTransport(object):
                 sent = self._safe_send(data[:(to_send-sofar)])
                 sofar += sent
 
-    def writeline(self, data):
+    def _writeline(self, data):
         """Write a line."""
         self.write(data + b'\r\n')
 
@@ -116,7 +116,7 @@ class RawTransport(object):
                 remaining -= len(recvd)
             return buf
 
-    def readline(self, timeout=30):
+    def _readline(self, timeout=30):
         """Receive bytes until a crlf, or timeout s.
         """
         with self._socket_lock:
@@ -138,11 +138,11 @@ class RawTransport(object):
             finally:
                 self._socket.settimeout(initial_timeout)
 
-    def write_packet(self, payload):
+    def _write_packet(self, payload):
         """Write the payload as a packet."""
         self.packet_builder.write_packet(self, payload)
 
-    def read_packet(self):
+    def _read_packet(self):
         """Read in a packet, returning its payload"""
         return self.packet_reader.read_packet(self)
 
@@ -172,7 +172,7 @@ def _negotiate_attr(client, server, attr):
         raise TransportError(msg)
 
 
-def negotiate(client_msg, server_msg):
+def _negotiate(client_msg, server_msg):
     """Negotiate all the attributes in Negotiated using the client and server
     messages.
 
@@ -190,24 +190,19 @@ def negotiate(client_msg, server_msg):
     )
 
 
-class Transport(object):
+class Transport(RawTransport):
     """An implementation of the SSH Transport layer, as defined in RFC 4253"""
     LOCAL_BANNER = SSH_IDENT_STRING
     SERVER_LOCATION = None
-    def __init__(self, raw):
-        self._raw = raw
+    def __init__(self, sock):
+        super(Transport, self).__init__(sock)
         self.state = State()
         self._remote_banner = None
         self._prefix = None
 
-    @classmethod
-    def from_addr(cls, addr):
-        """Return a transport using an address."""
-        return cls(RawTransport.from_addr(addr))
-
     def read_msg(self, types=None):
         """Read in a message from the remote system."""
-        payload = self._raw.read_packet()
+        payload = self._read_packet()
         msg = unpack_from(io.BytesIO(payload), self.state)
         if types:
             assert isinstance(msg, tuple(types))
@@ -216,7 +211,7 @@ class Transport(object):
     def send_msg(self, msg):
         """Send a message to the remote system."""
         payload = msg.pack()
-        self._raw.write_packet(payload)
+        self._write_packet(payload)
 
     def _make_kexinit(self): # pylint:disable=no-self-use
         """Make the kexinit message.
@@ -247,9 +242,9 @@ class Transport(object):
         """
         assert not self._remote_banner
         LOG.debug('Sent banner: {}'.format(self.LOCAL_BANNER))
-        self._raw.writeline(self.LOCAL_BANNER)
+        self._writeline(self.LOCAL_BANNER)
 
-        remote_banner = self._raw.readline(timeout)
+        remote_banner = self._readline(timeout)
         LOG.debug('Got banner: {}'.format(remote_banner))
         try:
             proto, protoversion, _ = remote_banner.split()[0].split(b'-')
@@ -300,7 +295,7 @@ class Transport(object):
         # about sending and receiving messages.
         kex_state = kex_handler.start_exchange(self)
         self.send_msg(tpt.KexNewkeys())
-        self._raw.packet_builder = kex_state.get_builder()
+        self.packet_builder = kex_state.get_builder()
         # TODO: more stuff
         self.wait_for_newkeys(kex_state)
         self.state.in_kex = False
@@ -310,7 +305,7 @@ class Transport(object):
         while True:
             recvd = self.read_msg()
             if isinstance(recvd, tpt.KexNewkeys):
-                self._raw.packet_reader = kex_state.get_reader()
+                self.packet_reader = kex_state.get_reader()
                 return
             else:
                 raise NotImplementedError('TODO: handle this')
@@ -319,7 +314,7 @@ class Transport(object):
 class ClientTransport(Transport):
     """A client-side Transport."""
     def _negotiate(self, local_msg, remote_msg):
-        return negotiate(local_msg, remote_msg)
+        return _negotiate(local_msg, remote_msg)
 
     def _set_prefix(self, local_msg, remote_msg):
         self._prefix = HashParts(self.LOCAL_BANNER, self._remote_banner,
@@ -331,7 +326,7 @@ class ServerTransport(Transport):
     # map host keytype -> host key
     HOST_KEYS = OrderedDict()
     def _negotiate(self, local_msg, remote_msg):
-        return negotiate(remote_msg, local_msg)
+        return _negotiate(remote_msg, local_msg)
 
     def get_host_privkey(self, key_type):
         """Retrieve the host private key, based on the specified key type."""

@@ -49,8 +49,8 @@ class DemoServer(threading.Thread):
         self.raw = transport.RawTransport(self._client)
 
     def _banners(self):
-        self.recvd.append(self.raw.readline())
-        self.raw.writeline(self.banner)
+        self.recvd.append(self.raw._readline())
+        self.raw._writeline(self.banner)
 
     def run(self):
         try:
@@ -58,7 +58,7 @@ class DemoServer(threading.Thread):
             try:
                 self._banners()
                 for reaction in self.reactions:
-                    packet = self.raw.read_packet()
+                    packet = self.raw._read_packet()
                     self.recvd.append(packet)
                     self.raw.write(reaction)
                     if self.die:
@@ -97,18 +97,18 @@ class TestRawTransport(unittest.TestCase):
     def test_basic(self):
         port = self.server.listening_block()
         raw = transport.RawTransport.from_addr(('localhost', port))
-        raw.writeline(b'SSH-2.0-blahclient')
-        assert raw.readline(2) == b'SSH-2.0-blahserver'
+        raw._writeline(b'SSH-2.0-blahclient')
+        assert raw._readline(2) == b'SSH-2.0-blahserver'
 
     def test_nohandler_packet(self):
         self.server.reactions.append(b'\x00\x00\x00\x0C\x0A\x01\x14\x40\x9C\xBF\x22\x13\x52\x5F\x5D\x55')
         port = self.server.listening_block()
         raw = transport.RawTransport.from_addr(('localhost', port))
 
-        raw.writeline(b'SSH-2.0-blahclient')
-        raw.readline(2)
-        raw.write_packet(b'\x00')
-        payload = raw.read_packet()
+        raw._writeline(b'SSH-2.0-blahclient')
+        raw._readline(2)
+        raw._write_packet(b'\x00')
+        payload = raw._read_packet()
         assert payload == b'\x01'
 
     def test_toolong_line(self):
@@ -116,10 +116,10 @@ class TestRawTransport(unittest.TestCase):
         port = self.server.listening_block()
         raw = transport.RawTransport.from_addr(('localhost', port))
 
-        raw.writeline(b'SSH-2.0-blahclient')
+        raw._writeline(b'SSH-2.0-blahclient')
 
         with pytest.raises(transport.Invalid):
-            raw.readline(2)
+            raw._readline(2)
         raw.close()
         self.server.join()
 
@@ -128,11 +128,11 @@ class TestRawTransport(unittest.TestCase):
         port = self.server.listening_block()
         raw = transport.RawTransport.from_addr(('localhost', port))
 
-        raw.writeline(b'SSH-2.0-blahclient')
-        raw.readline(2)
+        raw._writeline(b'SSH-2.0-blahclient')
+        raw._readline(2)
 
         self.server.join()
-        raw.write_packet(b'hello')
+        raw._write_packet(b'hello')
         raw.close()
 
 
@@ -147,7 +147,7 @@ class TestTransport(unittest.TestCase):
         port = self.server.listening_block()
         tpt = transport.Transport.from_addr(('localhost', port))
         tpt.banner_exchange()
-        tpt._raw.close()
+        tpt.close()
         self.server.join()
         assert tpt._remote_banner == b'SSH-2.0-blahserver'
 
@@ -157,7 +157,7 @@ class TestTransport(unittest.TestCase):
         tpt = transport.Transport.from_addr(('localhost', port))
         with pytest.raises(transport.TransportError):
             tpt.banner_exchange(2)
-        tpt._raw.close()
+        tpt.close()
         self.server.join()
 
     def test_bad_server(self):
@@ -166,6 +166,6 @@ class TestTransport(unittest.TestCase):
         tpt = transport.Transport.from_addr(('localhost', port))
         with pytest.raises(transport.TransportError):
             tpt.banner_exchange(2)
-        tpt._raw.close()
+        tpt.close()
         self.server.join()
 
